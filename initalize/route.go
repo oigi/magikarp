@@ -13,7 +13,7 @@ func Routers() *gin.Engine {
 	Router.Use(middleware.Cors()) //放行全部
 
 	{
-		systemRouter.InitUserRouter(Router.Group("user"))
+		systemRouter.InitUserRouter(Router.Group(""))
 	}
 
 	return Router

@@ -2,9 +2,9 @@ package system
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/oigi/Magikarp/models"
-	"github.com/oigi/Magikarp/models/request"
-	"github.com/oigi/Magikarp/models/response"
+	"github.com/oigi/Magikarp/models/common/request"
+	"github.com/oigi/Magikarp/models/common/response"
+	"github.com/oigi/Magikarp/models/system"
 	"github.com/oigi/Magikarp/utils"
 	"net/http"
 )
@@ -24,7 +24,7 @@ func (b *BaseApi) Login(c *gin.Context) {
 	//验证码检查
 	//登陆逻辑
 	{ // Todo 添加判断条件
-		u := &models.User{Username: l.Username, Email: l.Email, Password: l.Password}
+		u := &system.User{Username: l.Username, Email: l.Email, Password: l.Password}
 
 		user, err := userService.Login(u)
 		if err != nil {
@@ -42,7 +42,7 @@ func (b *BaseApi) Login(c *gin.Context) {
 
 }
 
-func (b *BaseApi) TokenNext(c *gin.Context, user models.User) {
+func (b *BaseApi) TokenNext(c *gin.Context, user system.User) {
 	//j := &utils.JWT{} 唯一签名
 	key := "啦啦啦啦啦" // Todo
 	token, err := utils.GenerateJWT(user.Username, key)

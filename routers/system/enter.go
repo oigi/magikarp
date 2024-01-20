@@ -1,4 +1,4 @@
-package user
+package system
 
 type RouterGroup struct {
 	UserRouter

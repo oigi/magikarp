@@ -1,4 +1,4 @@
-package api
+package v1
 
 import "github.com/oigi/Magikarp/api/v1/system"
 

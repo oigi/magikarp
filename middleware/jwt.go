@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/oigi/Magikarp/models/response"
+	"github.com/oigi/Magikarp/models/common/response"
 	"github.com/oigi/Magikarp/utils"
 	"net/http"
 	"strings"
