@@ -1,7 +1,8 @@
-package api
+package system
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/oigi/Magikarp/api"
 	"github.com/oigi/Magikarp/models"
 	"github.com/oigi/Magikarp/models/request"
 	"github.com/oigi/Magikarp/models/response"
@@ -10,7 +11,7 @@ import (
 )
 
 // Login 登陆 Todo 日志加入
-func (b *BaseApi) Login(c *gin.Context) {
+func (b *api.BaseApi) Login(c *gin.Context) {
 	var l request.Login
 	err := c.ShouldBindJSON(&l)
 	//ip := c.ClientIP()
@@ -25,7 +26,7 @@ func (b *BaseApi) Login(c *gin.Context) {
 	//登陆逻辑
 	{ // Todo 添加判断条件
 		u := &models.User{Username: l.Username, Email: l.Email, Password: l.Password}
-		user, err := userService.Login(u)
+		user, err := api.userService.Login(u)
 		if err != nil {
 			// 登陆失败验证码次数+1
 			response.FailWithMessage("用户名不存在或者密码错误", c)
@@ -41,7 +42,7 @@ func (b *BaseApi) Login(c *gin.Context) {
 
 }
 
-func (b *BaseApi) TokenNext(c *gin.Context, user models.User) {
+func (b *api.BaseApi) TokenNext(c *gin.Context, user models.User) {
 	//j := &utils.JWT{} 唯一签名
 	key := "啦啦啦啦啦" // Todo
 	token, err := utils.GenerateJWT(user.Username, key)

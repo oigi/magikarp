@@ -14,7 +14,6 @@ func ParseDuration(d string) (time.Duration, error) {
 	}
 	if strings.Contains(d, "d") {
 		index := strings.Index(d, "d")
-
 		hour, _ := strconv.Atoi(d[:index])
 		dr = time.Hour * 24 * time.Duration(hour)
 		ndr, err := time.ParseDuration(d[index+1:])

@@ -1,13 +1,9 @@
 package api
 
-import "github.com/oigi/Magikarp/services"
+import "github.com/oigi/Magikarp/api/v1/system"
 
 type ApiGroup struct {
-	UserApiGroup.ApiGroup
+	SystemApiGroup system.ApiGroup
 }
 
 var ApiGroupApp = new(ApiGroup)
-
-var (
-	userService = services.ServiceGroupApp.UserServiceGroup
-)

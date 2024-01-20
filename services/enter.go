@@ -1,9 +1,9 @@
 package services
 
-import "github.com/oigi/Magikarp/services/user"
+import "github.com/oigi/Magikarp/services/system"
 
 type EnterServiceGroup struct {
-	UserServiceGroup user.UserService
+	SystemServiceGroup system.ServiceGroup
 }
 
 var ServiceGroupApp = new(EnterServiceGroup)
