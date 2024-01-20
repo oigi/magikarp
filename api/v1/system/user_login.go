@@ -1,15 +1,6 @@
 package system
 
-import (
-	"github.com/gin-gonic/gin"
-	"github.com/oigi/Magikarp/models/common/request"
-	"github.com/oigi/Magikarp/models/common/response"
-	"github.com/oigi/Magikarp/models/system"
-	"github.com/oigi/Magikarp/utils"
-	"net/http"
-)
-
-// Login 登陆 Todo 日志加入
+/*// Login 登陆 Todo 日志加入
 func (b *BaseApi) Login(c *gin.Context) {
 	var l request.Login
 	err := c.ShouldBindJSON(&l)
@@ -52,3 +43,4 @@ func (b *BaseApi) TokenNext(c *gin.Context, user system.User) {
 	}
 	c.JSON(http.StatusOK, gin.H{"token": token})
 }
+*/

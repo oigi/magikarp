@@ -1,15 +1,6 @@
 package system
 
-import (
-    "errors"
-    "github.com/google/uuid"
-    "github.com/oigi/Magikarp/global"
-    "github.com/oigi/Magikarp/models/system"
-    "github.com/oigi/Magikarp/utils"
-    "gorm.io/gorm"
-)
-
-type UserService struct{}
+/*type UserService struct{}
 
 // Login 登陆
 func (userService *UserService) Login(u *system.SysUser) (userInter *system.SysUser, err error) {
@@ -80,3 +71,4 @@ func (userService *UserService) DeleteUser(id int) (err error) {
 // SetUserInfo 设置用户信息
 
 // GetUserInfo 获取用户信息
+*/
