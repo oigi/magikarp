@@ -2,7 +2,7 @@ package initalize
 
 import (
 	"github.com/oigi/Magikarp/global"
-	"github.com/oigi/Magikarp/models/system"
+	"github.com/oigi/Magikarp/models/user"
 	"gorm.io/gorm"
 	"os"
 )
@@ -14,7 +14,8 @@ func Gorm() *gorm.DB {
 func RegisterTables() {
 	db := global.DB
 	err := db.AutoMigrate(
-		system.User{},
+		user.User{},
+		//Todo 添加其他的
 	)
 	if err != nil {
 		os.Exit(0)

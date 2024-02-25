@@ -8,12 +8,12 @@ import (
 
 func Routers() *gin.Engine {
 	Router := gin.Default()
-	systemRouter := routers.RouterGroupAPP.User
+	userRouter := routers.RouterGroupAPP.User
 
 	Router.Use(middleware.Cors()) //放行全部
 
 	{
-		systemRouter.InitUserRouter(Router.Group(""))
+		userRouter.InitUserRouter(Router.Group("/"))
 	}
 
 	return Router

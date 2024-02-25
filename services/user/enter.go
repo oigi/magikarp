@@ -1,4 +1,5 @@
-package system
+package user
 
 type ServiceGroup struct {
+	UService
 }
