@@ -6,7 +6,7 @@ import (
 
 type User struct {
 	global.MODEL
-	UID                int    `json:"uid" gorm:"index;comment:用户UID"`                      // 用户UID
+	UUID               int    `json:"uuid" gorm:"index;comment:用户UUID"`                    // 用户UUID
 	Password           string `json:"-"  gorm:"comment:用户登录密码"`                            // 用户登录密码
 	NickName           string `json:"nickName" gorm:"default:系统用户;comment:用户昵称"`           // 用户昵称
 	HeaderImg          string `json:"headerImg" gorm:"comment:用户头像"`                       // 用户头像

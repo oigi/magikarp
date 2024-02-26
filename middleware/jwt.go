@@ -30,7 +30,7 @@ func JWTAuthMiddleware() func(c *gin.Context) {
 			return
 		}
 		// parts[1]是获取到的tokenString，我们使用之前定义好的解析JWT的函数来解析它
-		mc, err := utils.ParseJwt(parts[1], "啦啦啦啦啦")
+		mc, err := utils.ParseJwt(parts[1], []byte("lia3yo46464218uxi"))
 		if err != nil {
 			response.OkWithMessage("无效的token", c)
 			c.Abort()

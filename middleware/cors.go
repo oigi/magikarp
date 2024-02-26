@@ -24,5 +24,3 @@ func Cors() gin.HandlerFunc {
 		c.Next()
 	}
 }
-
-// CorsByRules 按照配置处理跨域请求
