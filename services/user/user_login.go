@@ -25,8 +25,8 @@ func (userService *UService) Login(u *user.User) (userInter *user.User, err erro
 // Register 注册
 func (userService *UService) Register(u *user.User) (userInter *user.User, err error) {
 	var user user.User
-	if !errors.Is(global.DB.Where("username = ?", u.NickName).First(&user).Error, gorm.ErrRecordNotFound) { // 判断用户名是否注册
-		return userInter, errors.New("用户名已注册")
+	if !errors.Is(global.DB.Where("nick_name = ?", u.NickName).First(&user).Error, gorm.ErrRecordNotFound) { // 判断昵称是否注册
+		return userInter, errors.New("昵称已注册")
 	}
 
 	if !errors.Is(global.DB.Where("email = ?", u.Email).First(&user).Error, gorm.ErrRecordNotFound) {
