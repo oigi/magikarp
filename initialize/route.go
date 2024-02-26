@@ -14,6 +14,7 @@ func Routers() *gin.Engine {
 
 	{
 		userRouter.InitUserRouter(Router.Group("/"))
+		userRouter.InitBaseRouter(Router.Group("/"))
 	}
 
 	return Router
