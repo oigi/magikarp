@@ -1,13 +1,13 @@
 package mysql
 
 import (
-    "github.com/oigi/Magikarp/zmodels old/user214"
+    "github.com/oigi/Magikarp/models/user"
     "os"
 )
 
 func migration() {
     err := _db.AutoMigrate(
-        user214.User{},
+        user.User{},
         //Todo 添加其他的
     )
     if err != nil {

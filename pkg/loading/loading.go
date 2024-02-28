@@ -25,6 +25,4 @@ func Loading() {
     mysql.InitMysql()
     initialize.Redis() // 初始化redis
 
-    router := initialize.Routers()
-    router.Run(":8080")
 }
