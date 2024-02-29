@@ -7,27 +7,27 @@ option go_package = "pb/user;user";
 message UserLoginReq {
   string email = 1;
   string password = 2;
+  reserved "number";
 }
 
 message UserLoginResp {
   int64 code = 1;
-  string msg = 2;
-  string AccessToken = 3;
-  string RefreshToken = 4;
-  string email = 5;
+  int64 user_id = 2;
+  string msg = 3;
+  string email = 4;
+  reserved "number";
 }
 
 message UserRegisterReq {
   string email = 1;
   string nick_name = 2;
   string password = 3;
+  reserved "number";
 }
 
 message UserRegisterResp {
   int64 code = 1;
   string msg = 2;
-  string AccessToken = 5;
-  string RefreshToken = 6;
 }
 
 service UserService {

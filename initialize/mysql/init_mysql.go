@@ -42,9 +42,19 @@ func GormMysql() error {
     _db = db
     migration()
     return err
-
 }
 
 func NewDBClient(ctx context.Context) *gorm.DB {
     return _db.WithContext(ctx)
+}
+
+func CloseDB() {
+    if _db != nil {
+        db, err := _db.DB()
+        if err != nil {
+            config.LOG.Error("数据库关闭失败:", zap.Error(err))
+            return
+        }
+        db.Close()
+    }
 }
