@@ -61,7 +61,7 @@ func startListen() {
 		}
 	}()
 
-	fmt.Printf("gateway listen on :%v \n", ":9090")
+	fmt.Printf("gateway listen on :%v \n", "9090")
 
 	// 等待接收关闭信号
 	<-quit
