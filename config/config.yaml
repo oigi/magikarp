@@ -2,7 +2,7 @@ mysql:
   path: 127.0.0.1
   port: "3306"
   config: charset=utf8mb4&parseTime=True&loc=Local
-  db-name: magikarp
+  db_name: "magikarp"
   username: root
   password: "123456"
 
@@ -21,3 +21,55 @@ zap:
   max-age: 0
   show-line: true
   log-in-console: true
+
+etcd:
+  address: 127.0.0.1:2379
+  server:
+    port: :4000
+    version: 1.0
+    jwtSecret: "38324-search-engine"
+    metrics: 127.0.0.1:4000
+
+  services:
+    gateway:
+      name: gateway
+      loadBalance: true
+      addr:
+        - 127.0.0.1:20001
+      metrics:
+        - 127.0.0.1:30001
+
+    user:
+      name: user
+      loadBalance: false
+      addr:
+        - 127.0.0.1:20002
+      metrics:
+        - 127.0.0.1:30002
+
+
+  domain:
+    user:
+      name: user
+    favorite:
+      name: favorite
+    search_engine:
+      name: search_engine
+    index_platform:
+      name: index_platform
+    mapreduce:
+      name: mapreduce
+    search_vector:
+      name: search_vector
+
+  milvus:
+    host: 127.0.0.1
+    port: 19530
+    vector_dimension: 768
+    default_milvus_table_name: milvus_table_name
+    metric_type: L2
+    timeout: 3
+
+  jaeger:
+    addr: 127.0.0.1:4317
+

@@ -18,6 +18,7 @@ func Viper() *viper.Viper {
         panic(fmt.Errorf("Fatal error config file: %s \n", err))
     }
 
+    // 解析整个配置到 config.CONFIG
     if err = v.Unmarshal(&config.CONFIG); err != nil {
         fmt.Println(err)
     }
