@@ -1,6 +1,8 @@
 package config
 
-import "github.com/oigi/Magikarp/config/model"
+import (
+	"github.com/oigi/Magikarp/config/model"
+)
 
 type Server struct {
 	JWT     model.JWT     `mapstructure:"jwt" json:"jwt" yaml:"jwt"`

@@ -1,0 +1,157 @@
+syntax = "proto3";
+package feed;
+option go_package = "pb/feed;feed";
+
+
+message CreateVideoReq {
+  int64 actor_id = 1; // 用户id
+  string cover_url = 2; //封面url
+  string url = 3;      //视频路径
+  string title = 4;    //视频标题
+  uint64 category = 5; //视频分类
+}
+
+message CreateVideoResp {
+  int64 code = 1;
+  string msg = 2;
+}
+
+message DeleteVideoReq {
+  int64 video_id = 1;
+}
+
+message DeleteVideoResp {
+  int64 code = 1;
+  string msg = 2;
+}
+
+message GetVideoListReq {
+  int64 actor_id = 1;
+}
+
+message GetVideoListResp {
+  int64 code = 1;
+  string msg = 2;
+}
+
+message SearchVideoReq {
+  int64 video_id = 1;
+  int64 user_id = 2;
+}
+
+message SearchVideoResp {
+  int64 code = 1;
+  string msg = 2;
+  Video video = 3;
+}
+
+message ShareVideoReq {
+  int64 actor_id = 1;
+  string url = 2;
+}
+
+message ShareVideoResp {
+  int64 code = 1;
+  string msg = 2;
+}
+
+message InitFollowFeedReq {
+  int64 user_id = 1;
+}
+
+message InitFollowFeedResp {
+  int64 code = 1;
+  string msg = 2;
+  string videos_push = 3; // 初始加载的关注视频流
+}
+
+message PushRankVideoReq {
+  int64 count = 1;
+}
+
+message PushRankVideoResp {
+  int64 code = 1;
+  string msg = 2;
+}
+
+message PushHotVideoReq {
+  int64 count = 1; // 请求的热门视频数量
+}
+
+message PushHotVideoResp {
+  int64 code = 1;
+  string msg = 2;
+}
+
+message PushSimilarVideoReq {
+  int64 category = 1; //视频分类
+}
+
+message PushSimilarVideoResp {
+  int64 code = 1;
+  string msg = 2;
+}
+
+message PushFollowVideoReq {
+  int64 follow_id = 1;
+}
+
+message PushFollowVideoResp {
+  int64 code = 1;
+  string msg = 2;
+}
+
+message ListHistoryVideoReq {
+  int64 user_id = 1;
+}
+
+message ListHistoryVideoResp {
+  int64 code = 1;
+  string msg = 2;
+}
+
+
+message User {
+  int64 id = 1; // 用户id
+  string name = 2; // 用户名称
+  int64 follow_count = 3; // 关注总数
+  int64 follower_count = 4; // 粉丝总数
+  bool  is_follow = 5; // true-已关注，false-未关注
+  string avatar = 6; // 用户头像
+  string background_image = 7; // 用户个人页顶部大图
+  string signature = 8; // 个人简介
+  int64 total_favorite = 9; // 获赞数量
+  int64 work_count = 10; // 作品数量
+  int64 favorite_count = 11; // 点赞数量
+  int64 gender = 12; // 性别
+  int64 friend_count = 13; // 好友数量
+}
+
+message Video {
+  int64 id = 1; // 视频唯一标识ID
+  User author = 2; // 视频作者的用户信息
+  string play_url = 3; // 视频播放地址
+  string cover_url = 4; // 视频封面图片地址
+  int64 favorite_count = 5; // 视频被收藏的次数
+  int64 comment_count = 6; // 视频的评论数量
+  bool is_favorite = 7; // 当前用户是否已收藏该视频
+  string title = 8; // 视频的标题
+  string create_time = 9; // 视频的创建时间
+  int64 star_count = 10; // 视频的点赞数
+  bool is_star = 11; // 当前用户是否已点赞该视频
+  string duration = 12; // 视频的持续时间
+}
+
+service Feed {
+  rpc CreateVideo(CreateVideoReq) returns (CreateVideoResp);  // 创建视频
+  rpc DeleteVideo(DeleteVideoReq) returns(DeleteVideoResp);   // 删除视频
+  rpc GetVideo(GetVideoListReq)returns(GetVideoListResp);            // 获取视频信息
+  rpc SearchVideo(SearchVideoReq)returns(SearchVideoResp);// 搜索视频
+  rpc ShareVideo(ShareVideoReq)returns(ShareVideoResp);// 分享视频
+  rpc InitFollowFeed(InitFollowFeedReq)returns(InitFollowFeedResp); // 初始化关注的视频流
+  rpc PushRankVideo(PushRankVideoReq)returns(PushRankVideoResp);// 推送排行榜视频
+  rpc PushHotVideo(PushHotVideoReq)returns(PushHotVideoResp);  // 推送热门视频
+  rpc PushSimilarVideo(PushSimilarVideoReq)returns(PushSimilarVideoResp);  // 推送相似视频
+  rpc PushFollowVideo(PushFollowVideoReq)returns(PushFollowVideoResp);  // 推送关注人的视频
+  rpc ListHistoryVideo(ListHistoryVideoReq)returns(ListHistoryVideoResp); // 列出历史视频
+}

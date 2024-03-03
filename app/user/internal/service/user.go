@@ -6,7 +6,6 @@ import (
 	"github.com/oigi/Magikarp/config"
 	"github.com/oigi/Magikarp/consts/e"
 	"github.com/oigi/Magikarp/grpc/pb/user"
-	"github.com/oigi/Magikarp/initialize/mysql"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
 	"sync"
@@ -29,7 +28,7 @@ func GetUserServe() *UserServe {
 func (u *UserServe) UserLogin(ctx context.Context, req *user.UserLoginReq) (resp *user.UserLoginResp, err error) {
 	resp = new(user.UserLoginResp)
 	client := dao.NewUserDao(ctx)
-	defer mysql.CloseDB()
+	//defer mysql.CloseDB() TODO 处理数据库关闭
 	r, err := client.GetUserInfo(req)
 	if err != nil {
 		resp.Code = e.ERROR
