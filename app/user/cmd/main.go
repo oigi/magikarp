@@ -2,12 +2,12 @@ package main
 
 import (
     "context"
+    "github.com/oigi/Magikarp/app/user/consts"
     "github.com/oigi/Magikarp/app/user/internal/model"
     "github.com/oigi/Magikarp/app/user/internal/service"
     "github.com/oigi/Magikarp/config"
     "github.com/oigi/Magikarp/grpc/pb/user"
     "github.com/oigi/Magikarp/initialize/mysql"
-    "github.com/oigi/Magikarp/pkg/consts"
     "github.com/oigi/Magikarp/pkg/discovery"
     "github.com/oigi/Magikarp/pkg/loading"
     "github.com/oigi/Magikarp/pkg/prometheus"
@@ -32,7 +32,7 @@ func main() {
         Addr: grpcAddress,
     }
     //注册tracer
-    provider := tracing.InitTracerProvider(config.CONFIG.Etcd.Jaeger.Addr, "user")
+    provider := tracing.InitTracerProvider(config.CONFIG.Etcd.Jaeger.Addr, consts.UserServiceName)
     defer func() {
         if provider == nil {
             return
@@ -50,7 +50,7 @@ func main() {
     defer server.Stop()
     // 绑定service
     user.RegisterUserServiceServer(server, service.GetUserServe())
-    prometheus.RegisterServer(server, config.CONFIG.Etcd.Services["user"].Metrics[0], "user")
+    prometheus.RegisterServer(server, config.CONFIG.Etcd.Services[consts.UserServiceName].Metrics[0], consts.UserServiceName)
     lis, err := net.Listen("tcp", grpcAddress)
     if err != nil {
         panic(err)
