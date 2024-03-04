@@ -40,7 +40,6 @@ func UserLogin(ctx *gin.Context) {
         ctx.JSON(http.StatusOK, resp.RespError(ctx, err, "绑定参数错误"))
         return
     }
-
     login, err := rpc.UserLogin(ctx, &req)
     if err != nil {
         config.LOG.Error("UserUserLogin RPC服务调用错误")
