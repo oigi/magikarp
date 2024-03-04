@@ -2,7 +2,7 @@ package feed
 
 import (
 	"database/sql"
-	"github.com/oigi/Magikarp/models"
+	"github.com/oigi/Magikarp/consts"
 )
 
 type Videos struct {
@@ -18,5 +18,5 @@ type Videos struct {
 	Duration      sql.NullString `json:"duration" gorm:"column:duration;type:varchar(255);comment:视频时长"`
 	Label         string         `json:"label" gorm:"column:label;type:varchar(255);comment:视频标签;NOT NULL"`
 	Open          bool           `json:"open" gorm:"column:open;default:'true';comment:是否公开"`
-	models.Model
+	consts.Model
 }

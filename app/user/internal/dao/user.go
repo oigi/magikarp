@@ -2,9 +2,9 @@ package dao
 
 import (
 	"context"
+	userModel "github.com/oigi/Magikarp/app/user/internal/model"
 	"github.com/oigi/Magikarp/grpc/pb/user"
 	"github.com/oigi/Magikarp/initialize/mysql"
-	userModel "github.com/oigi/Magikarp/models/user"
 	"github.com/oigi/Magikarp/pkg/utils"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
@@ -20,8 +20,7 @@ func NewUserDao(ctx context.Context) *UserDao {
 
 // GetUserInfo 获取用户信息
 func (dao *UserDao) GetUserInfo(req *user.UserLoginReq) (r *userModel.User, err error) {
-	err = dao.Model(&userModel.User{}).Where("email=?", req.Email).
-		First(&r).Error
+	err = dao.Model(&userModel.User{}).Where("email=?", req.Email).First(&r).Error
 	if err != nil {
 		err = errors.Wrapf(err, "failed to get user info, userName = %v", req.Email)
 	}
@@ -31,13 +30,6 @@ func (dao *UserDao) GetUserInfo(req *user.UserLoginReq) (r *userModel.User, err 
 // CreateUser 创建用户
 func (dao *UserDao) CreateUser(req *user.UserRegisterReq) (err error) {
 	var user userModel.User
-	if req.NickName == "" {
-		return errors.New("昵称不能为空")
-	}
-
-	if req.Email == "" {
-		return errors.New("邮箱不能为空")
-	}
 
 	if !errors.Is(dao.Where("nick_name = ?", req.NickName).First(&user).Error, gorm.ErrRecordNotFound) { // 判断昵称是否注册
 		return errors.New("昵称已注册")

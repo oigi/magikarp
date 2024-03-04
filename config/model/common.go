@@ -1,4 +1,4 @@
-package models
+package consts
 
 import (
 	"gorm.io/gorm"

@@ -1,6 +1,8 @@
 package user
 
-import "github.com/oigi/Magikarp/models"
+import (
+	"github.com/oigi/Magikarp/consts"
+)
 
 type User struct {
 	ID                 int64  `gorm:"primarykey; autoIncrement:10000"`                      // 主键ID
@@ -12,7 +14,7 @@ type User struct {
 	Dec                string `json:"dec" gorm:"comment:'个性签名'"`                            // 个性签名
 	Enable             int    `json:"enable" gorm:"default:1;comment:用户是否被冻结 0停用 1正常 2冻结"`  // 用户是否被冻结 1正常 2冻结
 	DefaultFavoritesID uint   `json:"default_favorites_id" gorm:"comment:默认收藏夹ID"`
-	models.Model
+	consts.Model
 }
 
 type TokenData struct {
