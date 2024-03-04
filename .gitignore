@@ -4,7 +4,7 @@
 # Binaries for programs and plugins
 .idea/
 log/
-default.etcd
+default.etcd/
 *.exe
 *.exe~
 *.dll
