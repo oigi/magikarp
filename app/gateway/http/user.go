@@ -3,9 +3,9 @@ package http
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/oigi/Magikarp/app/gateway/rpc"
+	user2 "github.com/oigi/Magikarp/app/user/internal/model/user"
 	"github.com/oigi/Magikarp/config"
 	"github.com/oigi/Magikarp/grpc/pb/user"
-	user2 "github.com/oigi/Magikarp/models/user"
 	"github.com/oigi/Magikarp/pkg/jwt"
 	"github.com/oigi/Magikarp/pkg/resp"
 	"go.uber.org/zap"

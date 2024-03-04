@@ -8,7 +8,8 @@ message CreateVideoReq {
   string cover_url = 2; //封面url
   string url = 3;      //视频路径
   string title = 4;    //视频标题
-  uint64 category = 5; //视频分类
+  string category = 5; //视频分类
+  string  label = 6;  //视频标签
 }
 
 message CreateVideoResp {
@@ -62,7 +63,6 @@ message InitFollowFeedReq {
 message InitFollowFeedResp {
   int64 code = 1;
   string msg = 2;
-  string videos_push = 3; // 初始加载的关注视频流
 }
 
 message PushRankVideoReq {
@@ -140,6 +140,7 @@ message Video {
   int64 star_count = 10; // 视频的点赞数
   bool is_star = 11; // 当前用户是否已点赞该视频
   string duration = 12; // 视频的持续时间
+  int64 play_count = 13; // 视频播放量
 }
 
 service Feed {
