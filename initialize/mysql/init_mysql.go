@@ -11,13 +11,13 @@ import (
 
 var _db *gorm.DB
 
-func InitMysql() {
-    if err := GormMysql(); err != nil {
+func InitMysql(models ...interface{}) {
+    if err := GormMysql(models...); err != nil {
         config.LOG.Error("start database failed: ", zap.Error(err))
     }
 }
 
-func GormMysql() error {
+func GormMysql(models ...interface{}) error {
     m := config.CONFIG.Mysql
     if m.Dbname == "" {
         return nil
@@ -40,7 +40,9 @@ func GormMysql() error {
     sqlDB.SetMaxOpenConns(100) // 打开
     sqlDB.SetConnMaxLifetime(time.Second * 30)
     _db = db
-    migration()
+    if len(models) > 0 {
+        migration(models...)
+    }
     return err
 }
 

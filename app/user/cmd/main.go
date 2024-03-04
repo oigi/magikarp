@@ -2,9 +2,11 @@ package main
 
 import (
     "context"
+    "github.com/oigi/Magikarp/app/user/internal/model"
     "github.com/oigi/Magikarp/app/user/internal/service"
     "github.com/oigi/Magikarp/config"
     "github.com/oigi/Magikarp/grpc/pb/user"
+    "github.com/oigi/Magikarp/initialize/mysql"
     "github.com/oigi/Magikarp/pkg/consts"
     "github.com/oigi/Magikarp/pkg/discovery"
     "github.com/oigi/Magikarp/pkg/loading"
@@ -18,7 +20,7 @@ import (
 
 func main() {
     loading.Loading()
-
+    mysql.InitMysql(&model.User{})
     // etcd 地址
     etcdAddress := []string{config.CONFIG.Etcd.Address}
     // 服务注册
