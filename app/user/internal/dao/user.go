@@ -29,7 +29,7 @@ func (db *UserDao) GetUserInfo(req *user.UserLoginReq) (r *userModel.User, err e
     if ok := utils.BcryptCheck(req.Password, r.Password); !ok {
         return nil, errors.Wrap(err, "failed to compare passwords")
     }
-    return r, err
+    return
 }
 
 // CreateUser 创建用户
@@ -53,5 +53,5 @@ func (db *UserDao) CreateUser(req *user.UserRegisterReq) (err error) {
     if err = db.Create(&user).Error; err != nil {
         return errors.Wrap(err, "failed to create user")
     }
-    return err
+    return
 }

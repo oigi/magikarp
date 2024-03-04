@@ -7,72 +7,87 @@ import (
     "github.com/oigi/Magikarp/initialize/mysql"
     "github.com/pkg/errors"
     "gorm.io/gorm"
-    "time"
 )
 
 type FeedDao struct {
-    db    *gorm.DB
-    video feedModel.Videos
+    *gorm.DB
 }
 
 func NewFeedDao(ctx context.Context) *FeedDao {
     return &FeedDao{
-        db: mysql.NewDBClient(ctx)}
+        mysql.NewDBClient(ctx)}
 }
 
-// 获取视频信息
-
-// 获取视频播放量排行榜
-
-// GetVideoList 获取对应分类的视频
-func (f *FeedDao) GetVideoList(req *feed.GetVideoListReq) (r feedModel.Videos, err error) {
-    now := time.Now()
-    last := now.AddDate(-1, 0, 0)
-    if err = f.db.Limit(20).Where("created_at >= ?", last).Order("rand()").Find(&r).Error; err != nil {
+// FindAllVideos 获取全部视频
+func (f *FeedDao) FindAllVideos() (videos []feedModel.Videos, err error) {
+    if err := f.Find(&videos).Error; err != nil {
         err = errors.Wrap(err, "查询视频失败")
     }
     return
 }
 
-// 获取关注人的视频
+// FindVideoById 根据视频id获取视频信息
+func (f *FeedDao) FindVideoById(req *feed.SearchVideoReq) (video feedModel.Videos, err error) {
+    if err := f.Where("id = ?", req.VideoId).First(&video).Error; err != nil {
+        err = errors.Wrap(err, "查询视频失败")
+    }
+    return
+}
 
-// CreateVideo 创建视频
-func (f *FeedDao) CreateVideo(req *feed.CreateVideoReq) (err error) {
-    f.video = feedModel.Videos{
+// FindVideoListByCategory 根据对应属性找视频
+func (f *FeedDao) FindVideoListByCategory(req *feed.SearchVideoReq) (videos []feedModel.Videos, err error) {
+    if err = f.Where("category = ?", req.Category).Find(&videos).Error; err != nil {
+        err = errors.Wrap(err, "查询视频失败")
+    }
+    return
+}
+
+// FindVideoListByTable 根据对应标签找视频
+func (f *FeedDao) FindVideoListByTable(req *feed.SearchVideoReq) (videos []feedModel.Videos, err error) {
+    if err = f.Where("table = ?", req.Table).Find(&videos).Error; err != nil {
+        err = errors.Wrap(err, "查询视频失败")
+    }
+    return
+}
+
+// FindAllVideoByUserId 获取用户的全部视频
+func (f *FeedDao) FindAllVideoByUserId(req *feed.GetVideoListReq) (videos []feedModel.Videos, err error) {
+    if err := f.Where("actor_id = ?", req.ActorId).First(&videos).Error; err != nil {
+        err = errors.Wrap(err, "查询视频失败")
+    }
+    return
+}
+
+// InsertVideo 创建视频
+func (f *FeedDao) InsertVideo(req *feed.CreateVideoReq) (err error) {
+    var video feedModel.Videos
+    video = feedModel.Videos{
         AuthorId: req.ActorId,
         Title:    req.Title,
         CoverUrl: req.CoverUrl,
         Category: req.Category,
         Label:    req.Label,
     }
-    if err = f.db.Create(&f.video).Error; err != nil {
+    if err = f.Create(&video).Error; err != nil {
         return errors.Wrap(err, "failed to create video")
     }
     return
 }
 
-// UpdateVideo 更新视频
-func (f *FeedDao) UpdateVideo(req *feed.DeleteVideoReq) (err error) {
-    if err = f.db.Model(&f.video).Update("title = ?", req.VideoId).Error; err != nil {
-        return errors.Wrap(err, "")
+// UpdateVideoById 更新视频
+func (f *FeedDao) UpdateVideoById(req *feed.DeleteVideoReq) (err error) {
+    var video feedModel.Videos
+    if err = f.Model(&video).Update("id = ?", req.VideoId).Error; err != nil {
+        err = errors.Wrap(err, "")
     }
-    return err
+    return
 }
 
-// DeleteVideo 删除视频
-func (f *FeedDao) DeleteVideo(req *feed.DeleteVideoReq) (err error) {
-    if err = f.db.Model(&f.video).Delete("title = ?", req.VideoId).Error; err != nil {
-        return errors.Wrap(err, "")
-    }
-    return err
-}
-
-// InitVideoList 未登陆初始化推送视频
-func (f *FeedDao) InitVideoList() (r []feedModel.Videos, err error) {
-    now := time.Now()
-    last := now.AddDate(-1, 0, 0)
-    if err = f.db.Limit(20).Where("created_at >= ?", last).Order("rand()").Find(&r).Error; err != nil {
-        err = errors.Wrap(err, "查询视频失败")
+// DeleteVideoById 删除视频
+func (f *FeedDao) DeleteVideoById(req *feed.DeleteVideoReq) (err error) {
+    var video feedModel.Videos
+    if err = f.Model(&video).Delete("id = ?", req.VideoId).Error; err != nil {
+        err = errors.Wrap(err, "")
     }
     return
 }

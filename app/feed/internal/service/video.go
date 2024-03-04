@@ -2,30 +2,48 @@ package service
 
 import (
     "context"
+    "github.com/oigi/Magikarp/app/feed/internal/dao"
+    "github.com/oigi/Magikarp/config"
     "github.com/oigi/Magikarp/grpc/pb/feed"
     "github.com/oigi/Magikarp/pkg/consts/e"
-    "google.golang.org/grpc/codes"
-    "google.golang.org/grpc/status"
+    "go.uber.org/zap"
 )
 
 func (f *FeedServe) CreateVideo(ctx context.Context, req *feed.CreateVideoReq) (resp *feed.CreateVideoResp, err error) {
-    resp = new(feed.CreateVideoResp)
     resp.Code = e.SUCCESS
-    return nil, status.Errorf(codes.Unimplemented, "method CreateVideo not implemented")
+    err = dao.NewFeedDao(ctx).InsertVideo(req)
+    if err != nil {
+        resp.Code = e.ERROR
+        resp.Msg = "insert video error"
+        config.LOG.Error("insert video error", zap.Error(err))
+    }
+    return
 }
 
 func (f *FeedServe) DeleteVideo(ctx context.Context, req *feed.DeleteVideoReq) (resp *feed.DeleteVideoResp, err error) {
-    return nil, status.Errorf(codes.Unimplemented, "method DeleteVideo not implemented")
-}
-
-func (f *FeedServe) GetVideo(ctx context.Context, req *feed.GetVideoListReq) (resp *feed.GetVideoListResp, err error) {
-    return nil, status.Errorf(codes.Unimplemented, "method GetVideo not implemented")
+    resp.Code = e.SUCCESS
+    err = dao.NewFeedDao(ctx).DeleteVideoById(req)
+    if err != nil {
+        resp.Code = e.ERROR
+        resp.Msg = "delete video error"
+        config.LOG.Error("delete video error", zap.Error(err))
+    }
+    return
 }
 
 func (f *FeedServe) SearchVideo(ctx context.Context, req *feed.SearchVideoReq) (resp *feed.SearchVideoResp, err error) {
-    return nil, status.Errorf(codes.Unimplemented, "method SearchVideo not implemented")
+    resp.Code = e.SUCCESS
+    r, err := dao.NewFeedDao(ctx).g
+    if err != nil {
+        resp.Code = e.ERROR
+        resp.Msg = "insert video error"
+        config.LOG.Error("insert video error", zap.Error(err))
+    }
+    resp = & {
+        resp.Video = r.
+        resp.Code = e.ERROR
+        resp.Msg = "success"
+    }
+    return
 }
 
-func (f *FeedServe) ShareVideo(ctx context.Context, req *feed.ShareVideoReq) (resp *feed.ShareVideoResp, err error) {
-    return nil, status.Errorf(codes.Unimplemented, "method ShareVideo not implemented")
-}

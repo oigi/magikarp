@@ -6,7 +6,6 @@ import (
     "github.com/oigi/Magikarp/config"
     "github.com/oigi/Magikarp/grpc/pb/user"
     "github.com/oigi/Magikarp/pkg/consts/e"
-    "github.com/pkg/errors"
     "go.uber.org/zap"
     "sync"
 )
@@ -26,14 +25,12 @@ func GetUserServe() *UserServe {
 }
 
 func (u *UserServe) UserLogin(ctx context.Context, req *user.UserLoginReq) (resp *user.UserLoginResp, err error) {
-    resp = new(user.UserLoginResp)
     client := dao.NewUserDao(ctx)
     //defer mysql.CloseDB() TODO 处理数据库关闭
     r, err := client.GetUserInfo(req)
     if err != nil {
         resp.Code = e.ERROR
         config.LOG.Error("getUserInfo error", zap.Error(err))
-        errors.WithMessage(err, "getUserInfo error")
         return
     }
 
@@ -46,13 +43,11 @@ func (u *UserServe) UserLogin(ctx context.Context, req *user.UserLoginReq) (resp
     return
 }
 func (u *UserServe) UserRegister(ctx context.Context, req *user.UserRegisterReq) (resp *user.UserRegisterResp, err error) {
-    resp = new(user.UserRegisterResp)
     resp.Code = e.SUCCESS
     err = dao.NewUserDao(ctx).CreateUser(req)
     if err != nil {
         resp.Code = e.ERROR
         resp.Msg = "注册失败"
-
     }
     return
 }

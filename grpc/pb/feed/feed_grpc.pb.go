@@ -23,16 +23,13 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type FeedClient interface {
 	CreateVideo(ctx context.Context, in *CreateVideoReq, opts ...grpc.CallOption) (*CreateVideoResp, error)
+	UpdateVideo(ctx context.Context, in *UpdateVideoReq, opts ...grpc.CallOption) (*UpdateVideoResp, error)
 	DeleteVideo(ctx context.Context, in *DeleteVideoReq, opts ...grpc.CallOption) (*DeleteVideoResp, error)
 	GetVideo(ctx context.Context, in *GetVideoListReq, opts ...grpc.CallOption) (*GetVideoListResp, error)
 	SearchVideo(ctx context.Context, in *SearchVideoReq, opts ...grpc.CallOption) (*SearchVideoResp, error)
-	ShareVideo(ctx context.Context, in *ShareVideoReq, opts ...grpc.CallOption) (*ShareVideoResp, error)
+	GetRankVideo(ctx context.Context, in *GetRankVideoReq, opts ...grpc.CallOption) (*GetRankVideoResp, error)
 	InitFollowFeed(ctx context.Context, in *InitFollowFeedReq, opts ...grpc.CallOption) (*InitFollowFeedResp, error)
-	PushRankVideo(ctx context.Context, in *PushRankVideoReq, opts ...grpc.CallOption) (*PushRankVideoResp, error)
-	PushHotVideo(ctx context.Context, in *PushHotVideoReq, opts ...grpc.CallOption) (*PushHotVideoResp, error)
-	PushSimilarVideo(ctx context.Context, in *PushSimilarVideoReq, opts ...grpc.CallOption) (*PushSimilarVideoResp, error)
-	PushFollowVideo(ctx context.Context, in *PushFollowVideoReq, opts ...grpc.CallOption) (*PushFollowVideoResp, error)
-	ListHistoryVideo(ctx context.Context, in *ListHistoryVideoReq, opts ...grpc.CallOption) (*ListHistoryVideoResp, error)
+	GetUserFeed(ctx context.Context, in *GetUserFeedReq, opts ...grpc.CallOption) (*GetUserFeedResp, error)
 }
 
 type feedClient struct {
@@ -46,6 +43,15 @@ func NewFeedClient(cc grpc.ClientConnInterface) FeedClient {
 func (c *feedClient) CreateVideo(ctx context.Context, in *CreateVideoReq, opts ...grpc.CallOption) (*CreateVideoResp, error) {
 	out := new(CreateVideoResp)
 	err := c.cc.Invoke(ctx, "/feed.Feed/CreateVideo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *feedClient) UpdateVideo(ctx context.Context, in *UpdateVideoReq, opts ...grpc.CallOption) (*UpdateVideoResp, error) {
+	out := new(UpdateVideoResp)
+	err := c.cc.Invoke(ctx, "/feed.Feed/UpdateVideo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -79,9 +85,9 @@ func (c *feedClient) SearchVideo(ctx context.Context, in *SearchVideoReq, opts .
 	return out, nil
 }
 
-func (c *feedClient) ShareVideo(ctx context.Context, in *ShareVideoReq, opts ...grpc.CallOption) (*ShareVideoResp, error) {
-	out := new(ShareVideoResp)
-	err := c.cc.Invoke(ctx, "/feed.Feed/ShareVideo", in, out, opts...)
+func (c *feedClient) GetRankVideo(ctx context.Context, in *GetRankVideoReq, opts ...grpc.CallOption) (*GetRankVideoResp, error) {
+	out := new(GetRankVideoResp)
+	err := c.cc.Invoke(ctx, "/feed.Feed/GetRankVideo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -97,45 +103,9 @@ func (c *feedClient) InitFollowFeed(ctx context.Context, in *InitFollowFeedReq, 
 	return out, nil
 }
 
-func (c *feedClient) PushRankVideo(ctx context.Context, in *PushRankVideoReq, opts ...grpc.CallOption) (*PushRankVideoResp, error) {
-	out := new(PushRankVideoResp)
-	err := c.cc.Invoke(ctx, "/feed.Feed/PushRankVideo", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *feedClient) PushHotVideo(ctx context.Context, in *PushHotVideoReq, opts ...grpc.CallOption) (*PushHotVideoResp, error) {
-	out := new(PushHotVideoResp)
-	err := c.cc.Invoke(ctx, "/feed.Feed/PushHotVideo", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *feedClient) PushSimilarVideo(ctx context.Context, in *PushSimilarVideoReq, opts ...grpc.CallOption) (*PushSimilarVideoResp, error) {
-	out := new(PushSimilarVideoResp)
-	err := c.cc.Invoke(ctx, "/feed.Feed/PushSimilarVideo", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *feedClient) PushFollowVideo(ctx context.Context, in *PushFollowVideoReq, opts ...grpc.CallOption) (*PushFollowVideoResp, error) {
-	out := new(PushFollowVideoResp)
-	err := c.cc.Invoke(ctx, "/feed.Feed/PushFollowVideo", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *feedClient) ListHistoryVideo(ctx context.Context, in *ListHistoryVideoReq, opts ...grpc.CallOption) (*ListHistoryVideoResp, error) {
-	out := new(ListHistoryVideoResp)
-	err := c.cc.Invoke(ctx, "/feed.Feed/ListHistoryVideo", in, out, opts...)
+func (c *feedClient) GetUserFeed(ctx context.Context, in *GetUserFeedReq, opts ...grpc.CallOption) (*GetUserFeedResp, error) {
+	out := new(GetUserFeedResp)
+	err := c.cc.Invoke(ctx, "/feed.Feed/GetUserFeed", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -147,16 +117,13 @@ func (c *feedClient) ListHistoryVideo(ctx context.Context, in *ListHistoryVideoR
 // for forward compatibility
 type FeedServer interface {
 	CreateVideo(context.Context, *CreateVideoReq) (*CreateVideoResp, error)
+	UpdateVideo(context.Context, *UpdateVideoReq) (*UpdateVideoResp, error)
 	DeleteVideo(context.Context, *DeleteVideoReq) (*DeleteVideoResp, error)
 	GetVideo(context.Context, *GetVideoListReq) (*GetVideoListResp, error)
 	SearchVideo(context.Context, *SearchVideoReq) (*SearchVideoResp, error)
-	ShareVideo(context.Context, *ShareVideoReq) (*ShareVideoResp, error)
+	GetRankVideo(context.Context, *GetRankVideoReq) (*GetRankVideoResp, error)
 	InitFollowFeed(context.Context, *InitFollowFeedReq) (*InitFollowFeedResp, error)
-	PushRankVideo(context.Context, *PushRankVideoReq) (*PushRankVideoResp, error)
-	PushHotVideo(context.Context, *PushHotVideoReq) (*PushHotVideoResp, error)
-	PushSimilarVideo(context.Context, *PushSimilarVideoReq) (*PushSimilarVideoResp, error)
-	PushFollowVideo(context.Context, *PushFollowVideoReq) (*PushFollowVideoResp, error)
-	ListHistoryVideo(context.Context, *ListHistoryVideoReq) (*ListHistoryVideoResp, error)
+	GetUserFeed(context.Context, *GetUserFeedReq) (*GetUserFeedResp, error)
 	mustEmbedUnimplementedFeedServer()
 }
 
@@ -167,6 +134,9 @@ type UnimplementedFeedServer struct {
 func (UnimplementedFeedServer) CreateVideo(context.Context, *CreateVideoReq) (*CreateVideoResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateVideo not implemented")
 }
+func (UnimplementedFeedServer) UpdateVideo(context.Context, *UpdateVideoReq) (*UpdateVideoResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateVideo not implemented")
+}
 func (UnimplementedFeedServer) DeleteVideo(context.Context, *DeleteVideoReq) (*DeleteVideoResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteVideo not implemented")
 }
@@ -176,26 +146,14 @@ func (UnimplementedFeedServer) GetVideo(context.Context, *GetVideoListReq) (*Get
 func (UnimplementedFeedServer) SearchVideo(context.Context, *SearchVideoReq) (*SearchVideoResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SearchVideo not implemented")
 }
-func (UnimplementedFeedServer) ShareVideo(context.Context, *ShareVideoReq) (*ShareVideoResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ShareVideo not implemented")
+func (UnimplementedFeedServer) GetRankVideo(context.Context, *GetRankVideoReq) (*GetRankVideoResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetRankVideo not implemented")
 }
 func (UnimplementedFeedServer) InitFollowFeed(context.Context, *InitFollowFeedReq) (*InitFollowFeedResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InitFollowFeed not implemented")
 }
-func (UnimplementedFeedServer) PushRankVideo(context.Context, *PushRankVideoReq) (*PushRankVideoResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PushRankVideo not implemented")
-}
-func (UnimplementedFeedServer) PushHotVideo(context.Context, *PushHotVideoReq) (*PushHotVideoResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PushHotVideo not implemented")
-}
-func (UnimplementedFeedServer) PushSimilarVideo(context.Context, *PushSimilarVideoReq) (*PushSimilarVideoResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PushSimilarVideo not implemented")
-}
-func (UnimplementedFeedServer) PushFollowVideo(context.Context, *PushFollowVideoReq) (*PushFollowVideoResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PushFollowVideo not implemented")
-}
-func (UnimplementedFeedServer) ListHistoryVideo(context.Context, *ListHistoryVideoReq) (*ListHistoryVideoResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListHistoryVideo not implemented")
+func (UnimplementedFeedServer) GetUserFeed(context.Context, *GetUserFeedReq) (*GetUserFeedResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserFeed not implemented")
 }
 func (UnimplementedFeedServer) mustEmbedUnimplementedFeedServer() {}
 
@@ -224,6 +182,24 @@ func _Feed_CreateVideo_Handler(srv interface{}, ctx context.Context, dec func(in
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(FeedServer).CreateVideo(ctx, req.(*CreateVideoReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Feed_UpdateVideo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateVideoReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FeedServer).UpdateVideo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/feed.Feed/UpdateVideo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FeedServer).UpdateVideo(ctx, req.(*UpdateVideoReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -282,20 +258,20 @@ func _Feed_SearchVideo_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Feed_ShareVideo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ShareVideoReq)
+func _Feed_GetRankVideo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetRankVideoReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(FeedServer).ShareVideo(ctx, in)
+		return srv.(FeedServer).GetRankVideo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/feed.Feed/ShareVideo",
+		FullMethod: "/feed.Feed/GetRankVideo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FeedServer).ShareVideo(ctx, req.(*ShareVideoReq))
+		return srv.(FeedServer).GetRankVideo(ctx, req.(*GetRankVideoReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -318,92 +294,20 @@ func _Feed_InitFollowFeed_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Feed_PushRankVideo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PushRankVideoReq)
+func _Feed_GetUserFeed_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserFeedReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(FeedServer).PushRankVideo(ctx, in)
+		return srv.(FeedServer).GetUserFeed(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/feed.Feed/PushRankVideo",
+		FullMethod: "/feed.Feed/GetUserFeed",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FeedServer).PushRankVideo(ctx, req.(*PushRankVideoReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Feed_PushHotVideo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PushHotVideoReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(FeedServer).PushHotVideo(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/feed.Feed/PushHotVideo",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FeedServer).PushHotVideo(ctx, req.(*PushHotVideoReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Feed_PushSimilarVideo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PushSimilarVideoReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(FeedServer).PushSimilarVideo(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/feed.Feed/PushSimilarVideo",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FeedServer).PushSimilarVideo(ctx, req.(*PushSimilarVideoReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Feed_PushFollowVideo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PushFollowVideoReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(FeedServer).PushFollowVideo(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/feed.Feed/PushFollowVideo",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FeedServer).PushFollowVideo(ctx, req.(*PushFollowVideoReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Feed_ListHistoryVideo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListHistoryVideoReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(FeedServer).ListHistoryVideo(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/feed.Feed/ListHistoryVideo",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FeedServer).ListHistoryVideo(ctx, req.(*ListHistoryVideoReq))
+		return srv.(FeedServer).GetUserFeed(ctx, req.(*GetUserFeedReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -420,6 +324,10 @@ var Feed_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Feed_CreateVideo_Handler,
 		},
 		{
+			MethodName: "UpdateVideo",
+			Handler:    _Feed_UpdateVideo_Handler,
+		},
+		{
 			MethodName: "DeleteVideo",
 			Handler:    _Feed_DeleteVideo_Handler,
 		},
@@ -432,32 +340,16 @@ var Feed_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Feed_SearchVideo_Handler,
 		},
 		{
-			MethodName: "ShareVideo",
-			Handler:    _Feed_ShareVideo_Handler,
+			MethodName: "GetRankVideo",
+			Handler:    _Feed_GetRankVideo_Handler,
 		},
 		{
 			MethodName: "InitFollowFeed",
 			Handler:    _Feed_InitFollowFeed_Handler,
 		},
 		{
-			MethodName: "PushRankVideo",
-			Handler:    _Feed_PushRankVideo_Handler,
-		},
-		{
-			MethodName: "PushHotVideo",
-			Handler:    _Feed_PushHotVideo_Handler,
-		},
-		{
-			MethodName: "PushSimilarVideo",
-			Handler:    _Feed_PushSimilarVideo_Handler,
-		},
-		{
-			MethodName: "PushFollowVideo",
-			Handler:    _Feed_PushFollowVideo_Handler,
-		},
-		{
-			MethodName: "ListHistoryVideo",
-			Handler:    _Feed_ListHistoryVideo_Handler,
+			MethodName: "GetUserFeed",
+			Handler:    _Feed_GetUserFeed_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -3,9 +3,9 @@ package rpc
 import (
     "context"
     "fmt"
+    "github.com/oigi/Magikarp/app/gateway/consts"
     "github.com/oigi/Magikarp/config"
     "github.com/oigi/Magikarp/grpc/pb/user"
-    "github.com/oigi/Magikarp/pkg/consts"
     "github.com/oigi/Magikarp/pkg/discovery"
     "github.com/oigi/Magikarp/pkg/prometheus"
     "github.com/pkg/errors"
@@ -21,7 +21,6 @@ var (
     Register   *discovery.Resolver
     ctx        context.Context
     CancelFunc context.CancelFunc
-
     UserClient user.UserServiceClient
 )
 

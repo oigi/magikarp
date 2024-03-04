@@ -2,7 +2,6 @@ syntax = "proto3";
 package feed;
 option go_package = "pb/feed;feed";
 
-
 message CreateVideoReq {
   int64 actor_id = 1; // 用户id
   string cover_url = 2; //封面url
@@ -17,6 +16,15 @@ message CreateVideoResp {
   string msg = 2;
 }
 
+message UpdateVideoReq {
+  int64 video_id = 1;
+}
+
+message UpdateVideoResp {
+  int64 code = 1;
+  string msg = 2;
+}
+
 message DeleteVideoReq {
   int64 video_id = 1;
 }
@@ -26,18 +34,12 @@ message DeleteVideoResp {
   string msg = 2;
 }
 
-message GetVideoListReq {
-  int64 actor_id = 1;
-}
-
-message GetVideoListResp {
-  int64 code = 1;
-  string msg = 2;
-}
-
 message SearchVideoReq {
   int64 video_id = 1;
   int64 user_id = 2;
+  string title = 3;
+  string category = 4;
+  string table = 5;
 }
 
 message SearchVideoResp {
@@ -46,18 +48,7 @@ message SearchVideoResp {
   Video video = 3;
 }
 
-message ShareVideoReq {
-  int64 actor_id = 1;
-  string url = 2;
-}
-
-message ShareVideoResp {
-  int64 code = 1;
-  string msg = 2;
-}
-
 message InitFollowFeedReq {
-  int64 user_id = 1;
 }
 
 message InitFollowFeedResp {
@@ -65,51 +56,23 @@ message InitFollowFeedResp {
   string msg = 2;
 }
 
-message PushRankVideoReq {
-  int64 count = 1;
-}
-
-message PushRankVideoResp {
-  int64 code = 1;
-  string msg = 2;
-}
-
-message PushHotVideoReq {
-  int64 count = 1; // 请求的热门视频数量
-}
-
-message PushHotVideoResp {
-  int64 code = 1;
-  string msg = 2;
-}
-
-message PushSimilarVideoReq {
-  int64 category = 1; //视频分类
-}
-
-message PushSimilarVideoResp {
-  int64 code = 1;
-  string msg = 2;
-}
-
-message PushFollowVideoReq {
-  int64 follow_id = 1;
-}
-
-message PushFollowVideoResp {
-  int64 code = 1;
-  string msg = 2;
-}
-
-message ListHistoryVideoReq {
+message GetUserFeedReq {
   int64 user_id = 1;
 }
 
-message ListHistoryVideoResp {
+message GetUserFeedResp {
   int64 code = 1;
   string msg = 2;
 }
 
+message GetRankVideoReq {
+  int64 count = 1;
+}
+
+message GetRankVideoResp {
+  int64 code = 1;
+  string msg = 2;
+}
 
 message User {
   int64 id = 1; // 用户id
@@ -144,15 +107,12 @@ message Video {
 }
 
 service Feed {
-  rpc CreateVideo(CreateVideoReq) returns (CreateVideoResp);  // 创建视频
-  rpc DeleteVideo(DeleteVideoReq) returns(DeleteVideoResp);   // 删除视频
-  rpc GetVideo(GetVideoListReq)returns(GetVideoListResp);            // 获取视频信息
+  rpc CreateVideo(CreateVideoReq)returns (CreateVideoResp);  // 创建视频
+  rpc UpdateVideo(UpdateVideoReq)returns(UpdateVideoResp);   // 更新视频
+  rpc DeleteVideo(DeleteVideoReq)returns(DeleteVideoResp);   // 删除视频
   rpc SearchVideo(SearchVideoReq)returns(SearchVideoResp);// 搜索视频
-  rpc ShareVideo(ShareVideoReq)returns(ShareVideoResp);// 分享视频
-  rpc InitFollowFeed(InitFollowFeedReq)returns(InitFollowFeedResp); // 初始化关注的视频流
-  rpc PushRankVideo(PushRankVideoReq)returns(PushRankVideoResp);// 推送排行榜视频
-  rpc PushHotVideo(PushHotVideoReq)returns(PushHotVideoResp);  // 推送热门视频
-  rpc PushSimilarVideo(PushSimilarVideoReq)returns(PushSimilarVideoResp);  // 推送相似视频
-  rpc PushFollowVideo(PushFollowVideoReq)returns(PushFollowVideoResp);  // 推送关注人的视频
-  rpc ListHistoryVideo(ListHistoryVideoReq)returns(ListHistoryVideoResp); // 列出历史视频
+  rpc GetRankVideo(GetRankVideoReq)returns(GetRankVideoResp);// 推送排行榜视频
+
+  rpc InitFollowFeed(InitFollowFeedReq)returns(InitFollowFeedResp); // 未登陆的视频流
+  rpc GetUserFeed(GetUserFeedReq)returns(GetUserFeedResp); //获取用户的流
 }
