@@ -9,12 +9,14 @@ import (
 func NewRouter() *gin.Engine {
     r := gin.Default()
     r.Use(middleware.Cors(), middleware.ErrorMiddleware())
-    v1 := r.Group("/")
+    user := r.Group("/user")
     {
-        v1.POST("/user/login", http.UserLogin)
-        v1.POST("/user/register", http.UserRegister)
-
+        user.POST("/login", http.UserLogin)
+        user.POST("/register", http.UserRegister)
     }
-
+    feed := r.Group("/feed").Use(middleware.JWTAuthMiddleware())
+    {
+        feed.POST("")
+    }
     return r
 }

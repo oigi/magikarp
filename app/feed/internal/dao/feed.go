@@ -4,7 +4,7 @@ import (
     "context"
     feedModel "github.com/oigi/Magikarp/app/feed/internal/model"
     "github.com/oigi/Magikarp/grpc/pb/feed"
-    "github.com/oigi/Magikarp/initialize/mysql"
+    "github.com/oigi/Magikarp/pkg/mysql"
     "github.com/pkg/errors"
     "gorm.io/gorm"
 )
@@ -50,8 +50,8 @@ func (f *FeedDao) FindVideoListByTable(req *feed.SearchVideoReq) (videos []feedM
     return
 }
 
-// FindAllVideoByUserId 获取用户的全部视频
-func (f *FeedDao) FindAllVideoByUserId(req *feed.GetVideoListReq) (videos []feedModel.Videos, err error) {
+// FindVideoListByUserId 获取用户的全部视频
+func (f *FeedDao) FindVideoListByUserId(req *feed.SearchVideoReq) (videos []feedModel.Videos, err error) {
     if err := f.Where("actor_id = ?", req.ActorId).First(&videos).Error; err != nil {
         err = errors.Wrap(err, "查询视频失败")
     }

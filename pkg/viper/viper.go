@@ -9,7 +9,7 @@ import (
 func Viper() *viper.Viper {
 	v := viper.New()
 	// 设置配置文件路径
-	v.AddConfigPath("model")
+	v.AddConfigPath("config")
 	v.SetConfigType("yaml")
 
 	// 读取配置文件
@@ -22,6 +22,6 @@ func Viper() *viper.Viper {
 	if err = v.Unmarshal(&config.CONFIG); err != nil {
 		fmt.Println(err)
 	}
-
+	fmt.Println(config.CONFIG)
 	return v
 }

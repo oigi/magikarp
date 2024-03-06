@@ -1,4 +1,4 @@
-package initialize
+package redis
 
 import (
     "context"
@@ -7,7 +7,7 @@ import (
     "go.uber.org/zap"
 )
 
-func Redis() {
+func InitRedis() {
     redisConfig := config.CONFIG.Redis
     client := redis.NewClient(&redis.Options{
         Addr:     redisConfig.Addr,

@@ -25,9 +25,11 @@ type FeedClient interface {
 	CreateVideo(ctx context.Context, in *CreateVideoReq, opts ...grpc.CallOption) (*CreateVideoResp, error)
 	UpdateVideo(ctx context.Context, in *UpdateVideoReq, opts ...grpc.CallOption) (*UpdateVideoResp, error)
 	DeleteVideo(ctx context.Context, in *DeleteVideoReq, opts ...grpc.CallOption) (*DeleteVideoResp, error)
-	GetVideo(ctx context.Context, in *GetVideoListReq, opts ...grpc.CallOption) (*GetVideoListResp, error)
-	SearchVideo(ctx context.Context, in *SearchVideoReq, opts ...grpc.CallOption) (*SearchVideoResp, error)
-	GetRankVideo(ctx context.Context, in *GetRankVideoReq, opts ...grpc.CallOption) (*GetRankVideoResp, error)
+	GetVideoById(ctx context.Context, in *SearchVideoReq, opts ...grpc.CallOption) (*SearchVideoResp, error)
+	GetVideoByCategory(ctx context.Context, in *SearchVideoReq, opts ...grpc.CallOption) (*SearchVideoResp, error)
+	GetVideoByTable(ctx context.Context, in *SearchVideoReq, opts ...grpc.CallOption) (*SearchVideoResp, error)
+	GetVideoByUserId(ctx context.Context, in *SearchVideoReq, opts ...grpc.CallOption) (*SearchVideoResp, error)
+	GetRankVideo(ctx context.Context, in *SearchVideoReq, opts ...grpc.CallOption) (*SearchVideoResp, error)
 	InitFollowFeed(ctx context.Context, in *InitFollowFeedReq, opts ...grpc.CallOption) (*InitFollowFeedResp, error)
 	GetUserFeed(ctx context.Context, in *GetUserFeedReq, opts ...grpc.CallOption) (*GetUserFeedResp, error)
 }
@@ -67,26 +69,44 @@ func (c *feedClient) DeleteVideo(ctx context.Context, in *DeleteVideoReq, opts .
 	return out, nil
 }
 
-func (c *feedClient) GetVideo(ctx context.Context, in *GetVideoListReq, opts ...grpc.CallOption) (*GetVideoListResp, error) {
-	out := new(GetVideoListResp)
-	err := c.cc.Invoke(ctx, "/feed.Feed/GetVideo", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *feedClient) SearchVideo(ctx context.Context, in *SearchVideoReq, opts ...grpc.CallOption) (*SearchVideoResp, error) {
+func (c *feedClient) GetVideoById(ctx context.Context, in *SearchVideoReq, opts ...grpc.CallOption) (*SearchVideoResp, error) {
 	out := new(SearchVideoResp)
-	err := c.cc.Invoke(ctx, "/feed.Feed/SearchVideo", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/feed.Feed/GetVideoById", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *feedClient) GetRankVideo(ctx context.Context, in *GetRankVideoReq, opts ...grpc.CallOption) (*GetRankVideoResp, error) {
-	out := new(GetRankVideoResp)
+func (c *feedClient) GetVideoByCategory(ctx context.Context, in *SearchVideoReq, opts ...grpc.CallOption) (*SearchVideoResp, error) {
+	out := new(SearchVideoResp)
+	err := c.cc.Invoke(ctx, "/feed.Feed/GetVideoByCategory", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *feedClient) GetVideoByTable(ctx context.Context, in *SearchVideoReq, opts ...grpc.CallOption) (*SearchVideoResp, error) {
+	out := new(SearchVideoResp)
+	err := c.cc.Invoke(ctx, "/feed.Feed/GetVideoByTable", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *feedClient) GetVideoByUserId(ctx context.Context, in *SearchVideoReq, opts ...grpc.CallOption) (*SearchVideoResp, error) {
+	out := new(SearchVideoResp)
+	err := c.cc.Invoke(ctx, "/feed.Feed/GetVideoByUserId", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *feedClient) GetRankVideo(ctx context.Context, in *SearchVideoReq, opts ...grpc.CallOption) (*SearchVideoResp, error) {
+	out := new(SearchVideoResp)
 	err := c.cc.Invoke(ctx, "/feed.Feed/GetRankVideo", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -119,9 +139,11 @@ type FeedServer interface {
 	CreateVideo(context.Context, *CreateVideoReq) (*CreateVideoResp, error)
 	UpdateVideo(context.Context, *UpdateVideoReq) (*UpdateVideoResp, error)
 	DeleteVideo(context.Context, *DeleteVideoReq) (*DeleteVideoResp, error)
-	GetVideo(context.Context, *GetVideoListReq) (*GetVideoListResp, error)
-	SearchVideo(context.Context, *SearchVideoReq) (*SearchVideoResp, error)
-	GetRankVideo(context.Context, *GetRankVideoReq) (*GetRankVideoResp, error)
+	GetVideoById(context.Context, *SearchVideoReq) (*SearchVideoResp, error)
+	GetVideoByCategory(context.Context, *SearchVideoReq) (*SearchVideoResp, error)
+	GetVideoByTable(context.Context, *SearchVideoReq) (*SearchVideoResp, error)
+	GetVideoByUserId(context.Context, *SearchVideoReq) (*SearchVideoResp, error)
+	GetRankVideo(context.Context, *SearchVideoReq) (*SearchVideoResp, error)
 	InitFollowFeed(context.Context, *InitFollowFeedReq) (*InitFollowFeedResp, error)
 	GetUserFeed(context.Context, *GetUserFeedReq) (*GetUserFeedResp, error)
 	mustEmbedUnimplementedFeedServer()
@@ -140,13 +162,19 @@ func (UnimplementedFeedServer) UpdateVideo(context.Context, *UpdateVideoReq) (*U
 func (UnimplementedFeedServer) DeleteVideo(context.Context, *DeleteVideoReq) (*DeleteVideoResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteVideo not implemented")
 }
-func (UnimplementedFeedServer) GetVideo(context.Context, *GetVideoListReq) (*GetVideoListResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetVideo not implemented")
+func (UnimplementedFeedServer) GetVideoById(context.Context, *SearchVideoReq) (*SearchVideoResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetVideoById not implemented")
 }
-func (UnimplementedFeedServer) SearchVideo(context.Context, *SearchVideoReq) (*SearchVideoResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SearchVideo not implemented")
+func (UnimplementedFeedServer) GetVideoByCategory(context.Context, *SearchVideoReq) (*SearchVideoResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetVideoByCategory not implemented")
 }
-func (UnimplementedFeedServer) GetRankVideo(context.Context, *GetRankVideoReq) (*GetRankVideoResp, error) {
+func (UnimplementedFeedServer) GetVideoByTable(context.Context, *SearchVideoReq) (*SearchVideoResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetVideoByTable not implemented")
+}
+func (UnimplementedFeedServer) GetVideoByUserId(context.Context, *SearchVideoReq) (*SearchVideoResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetVideoByUserId not implemented")
+}
+func (UnimplementedFeedServer) GetRankVideo(context.Context, *SearchVideoReq) (*SearchVideoResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRankVideo not implemented")
 }
 func (UnimplementedFeedServer) InitFollowFeed(context.Context, *InitFollowFeedReq) (*InitFollowFeedResp, error) {
@@ -222,44 +250,80 @@ func _Feed_DeleteVideo_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Feed_GetVideo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetVideoListReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(FeedServer).GetVideo(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/feed.Feed/GetVideo",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FeedServer).GetVideo(ctx, req.(*GetVideoListReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Feed_SearchVideo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Feed_GetVideoById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SearchVideoReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(FeedServer).SearchVideo(ctx, in)
+		return srv.(FeedServer).GetVideoById(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/feed.Feed/SearchVideo",
+		FullMethod: "/feed.Feed/GetVideoById",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FeedServer).SearchVideo(ctx, req.(*SearchVideoReq))
+		return srv.(FeedServer).GetVideoById(ctx, req.(*SearchVideoReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Feed_GetVideoByCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SearchVideoReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FeedServer).GetVideoByCategory(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/feed.Feed/GetVideoByCategory",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FeedServer).GetVideoByCategory(ctx, req.(*SearchVideoReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Feed_GetVideoByTable_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SearchVideoReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FeedServer).GetVideoByTable(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/feed.Feed/GetVideoByTable",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FeedServer).GetVideoByTable(ctx, req.(*SearchVideoReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Feed_GetVideoByUserId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SearchVideoReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FeedServer).GetVideoByUserId(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/feed.Feed/GetVideoByUserId",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FeedServer).GetVideoByUserId(ctx, req.(*SearchVideoReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Feed_GetRankVideo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetRankVideoReq)
+	in := new(SearchVideoReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -271,7 +335,7 @@ func _Feed_GetRankVideo_Handler(srv interface{}, ctx context.Context, dec func(i
 		FullMethod: "/feed.Feed/GetRankVideo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FeedServer).GetRankVideo(ctx, req.(*GetRankVideoReq))
+		return srv.(FeedServer).GetRankVideo(ctx, req.(*SearchVideoReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -332,12 +396,20 @@ var Feed_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Feed_DeleteVideo_Handler,
 		},
 		{
-			MethodName: "GetVideo",
-			Handler:    _Feed_GetVideo_Handler,
+			MethodName: "GetVideoById",
+			Handler:    _Feed_GetVideoById_Handler,
 		},
 		{
-			MethodName: "SearchVideo",
-			Handler:    _Feed_SearchVideo_Handler,
+			MethodName: "GetVideoByCategory",
+			Handler:    _Feed_GetVideoByCategory_Handler,
+		},
+		{
+			MethodName: "GetVideoByTable",
+			Handler:    _Feed_GetVideoByTable_Handler,
+		},
+		{
+			MethodName: "GetVideoByUserId",
+			Handler:    _Feed_GetVideoByUserId_Handler,
 		},
 		{
 			MethodName: "GetRankVideo",

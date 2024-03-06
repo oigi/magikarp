@@ -31,19 +31,82 @@ func (f *FeedServe) DeleteVideo(ctx context.Context, req *feed.DeleteVideoReq) (
     return
 }
 
-func (f *FeedServe) SearchVideo(ctx context.Context, req *feed.SearchVideoReq) (resp *feed.SearchVideoResp, err error) {
+func (f *FeedServe) GetVideoById(ctx context.Context, req *feed.SearchVideoReq) (resp *feed.SearchVideoResp, err error) {
     resp.Code = e.SUCCESS
-    r, err := dao.NewFeedDao(ctx).g
+    r, err := dao.NewFeedDao(ctx).FindVideoById(req)
     if err != nil {
         resp.Code = e.ERROR
         resp.Msg = "insert video error"
         config.LOG.Error("insert video error", zap.Error(err))
     }
-    resp = & {
-        resp.Video = r.
-        resp.Code = e.ERROR
-        resp.Msg = "success"
+    resp.Videos = []*feed.Video{
+        {
+            Id:            r.ID,
+            Uid:           r.AuthorId,
+            PlayUrl:       r.PlayUrl,
+            CoverUrl:      r.CoverUrl,
+            FavoriteCount: r.FavoriteCount,
+            CommentCount:  r.CommentCount,
+            Title:         r.Title,
+            CreateTime:    r.CreatedAt.String(),
+            StarCount:     r.StarCount,
+            Duration:      r.Duration.String(),
+            PlayCount:     r.PlayCount,
+        },
     }
     return
 }
 
+func (f *FeedServe) GetVideoByUserId(ctx context.Context, req *feed.SearchVideoReq) (resp *feed.SearchVideoResp, err error) {
+    resp.Code = e.SUCCESS
+    videos, err := dao.NewFeedDao(ctx).FindVideoListByUserId(req)
+    if err != nil {
+        resp.Code = e.ERROR
+        resp.Msg = "insert video error"
+        config.LOG.Error("insert video error", zap.Error(err))
+    }
+    resp.Videos = make([]*feed.Video, len(videos))
+    for i, r := range videos {
+        resp.Videos[i] = &feed.Video{
+            Id:            r.ID,
+            Uid:           r.AuthorId,
+            PlayUrl:       r.PlayUrl,
+            CoverUrl:      r.CoverUrl,
+            FavoriteCount: r.FavoriteCount,
+            CommentCount:  r.CommentCount,
+            Title:         r.Title,
+            CreateTime:    r.CreatedAt.String(),
+            StarCount:     r.StarCount,
+            Duration:      r.Duration.String(),
+            PlayCount:     r.PlayCount,
+        }
+    }
+    return
+}
+
+func (f *FeedServe) GetVideoByTable(ctx context.Context, req *feed.SearchVideoReq) (resp *feed.SearchVideoResp, err error) {
+    resp.Code = e.SUCCESS
+    videos, err := dao.NewFeedDao(ctx).FindVideoListByTable(req)
+    if err != nil {
+        resp.Code = e.ERROR
+        resp.Msg = "insert video error"
+        config.LOG.Error("insert video error", zap.Error(err))
+    }
+    resp.Videos = make([]*feed.Video, len(videos))
+    for i, r := range videos {
+        resp.Videos[i] = &feed.Video{
+            Id:            r.ID,
+            Uid:           r.AuthorId,
+            PlayUrl:       r.PlayUrl,
+            CoverUrl:      r.CoverUrl,
+            FavoriteCount: r.FavoriteCount,
+            CommentCount:  r.CommentCount,
+            Title:         r.Title,
+            CreateTime:    r.CreatedAt.String(),
+            StarCount:     r.StarCount,
+            Duration:      r.Duration.String(),
+            PlayCount:     r.PlayCount,
+        }
+    }
+    return
+}

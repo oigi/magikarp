@@ -4,7 +4,7 @@ import (
     "context"
     userModel "github.com/oigi/Magikarp/app/user/internal/model"
     "github.com/oigi/Magikarp/grpc/pb/user"
-    "github.com/oigi/Magikarp/initialize/mysql"
+    "github.com/oigi/Magikarp/pkg/mysql"
     "github.com/oigi/Magikarp/pkg/utils"
     "github.com/pkg/errors"
     "gorm.io/gorm"
