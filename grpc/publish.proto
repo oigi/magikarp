@@ -1,0 +1,4 @@
+syntax = "proto3";
+package publish;
+option go_package = "pb/publish;publish";
+

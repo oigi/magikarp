@@ -2,6 +2,47 @@ syntax = "proto3";
 package feed;
 option go_package = "pb/feed;feed";
 
+message Video {
+  int64 id = 1; // 视频唯一标识ID
+  int64 uid = 2;// 视频作者的用户信息
+  string play_url = 3; // 视频播放地址
+  string cover_url = 4; // 视频封面图片地址
+  int64 favorite_count = 5; // 视频被收藏的次数
+  int64 comment_count = 6; // 视频的评论数量
+  bool is_favorite = 7; // 当前用户是否已收藏该视频
+  string title = 8; // 视频的标题
+  string create_time = 9; // 视频的创建时间
+  int64 star_count = 10; // 视频的点赞数
+  bool is_star = 11; // 当前用户是否已点赞该视频
+  string duration = 12; // 视频的持续时间
+  int64 play_count = 13; // 视频播放量
+}
+
+message ListFeedReq {
+  string last_time = 1;
+  int64 actor_id = 2;
+}
+
+message ListFeedResp {
+  int64 code = 1;
+  string msg = 2;
+  int64 next_time = 3;
+  repeated Video video_list = 4;
+}
+
+message QueryVideosReq {
+  int64 actor_id = 1;
+  repeated int64 video_info = 2;
+}
+
+message QueryVideosResp {
+  int64 code = 1;
+  string msg = 2;
+  repeated Video video_list = 3;
+}
+
+
+/*
 message CreateVideoReq {
   int64 actor_id = 1; // 用户id
   string cover_url = 2; //封面url
@@ -57,25 +98,10 @@ message GetUserFeedResp {
   int64 code = 1;
   string msg = 2;
 }
-
-message Video {
-  int64 id = 1; // 视频唯一标识ID
-  int64 uid = 2;// 视频作者的用户信息
-  string play_url = 3; // 视频播放地址
-  string cover_url = 4; // 视频封面图片地址
-  int64 favorite_count = 5; // 视频被收藏的次数
-  int64 comment_count = 6; // 视频的评论数量
-  bool is_favorite = 7; // 当前用户是否已收藏该视频
-  string title = 8; // 视频的标题
-  string create_time = 9; // 视频的创建时间
-  int64 star_count = 10; // 视频的点赞数
-  bool is_star = 11; // 当前用户是否已点赞该视频
-  string duration = 12; // 视频的持续时间
-  int64 play_count = 13; // 视频播放量
-}
+*/
 
 service Feed {
-  rpc CreateVideo(CreateVideoReq)returns (CreateVideoResp);  // 创建视频
+/*  rpc CreateVideo(CreateVideoReq)returns (CreateVideoResp);  // 创建视频
   rpc UpdateVideo(UpdateVideoReq)returns(UpdateVideoResp);   // 更新视频
   rpc DeleteVideo(DeleteVideoReq)returns(DeleteVideoResp);   // 删除视频
 
@@ -84,5 +110,8 @@ service Feed {
   rpc GetVideoByTable(SearchVideoReq)returns(SearchVideoResp);// 搜索视频
   rpc GetVideoByUserId(SearchVideoReq)returns(SearchVideoResp);// 搜索视频
   rpc GetRankVideo(SearchVideoReq)returns(SearchVideoResp);// 推送排行榜视频
-  rpc GetUserFeed(GetUserFeedReq)returns(GetUserFeedResp); //获取用户的流
+  rpc GetUserFeed(GetUserFeedReq)returns(GetUserFeedResp); //获取用户的流*/
+
+  rpc ListVideos(ListFeedReq) returns (ListFeedResp);
+  rpc QueryVideos(QueryVideosReq) returns (QueryVideosResp);
 }

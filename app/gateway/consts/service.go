@@ -1,5 +1,10 @@
 package consts
 
 const (
-    UserServiceName = "user"
+	UserServiceName     = "user"
+	FeedServiceName     = "feed"
+	FavoriteServiceName = "favorite"
+	CommentServiceName  = "comment"
+	PublishServiceName  = "publish"
+	RelationServiceName = "relation"
 )

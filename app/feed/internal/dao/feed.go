@@ -1,23 +1,59 @@
 package dao
 
 import (
-    "context"
-    feedModel "github.com/oigi/Magikarp/app/feed/internal/model"
-    "github.com/oigi/Magikarp/grpc/pb/feed"
-    "github.com/oigi/Magikarp/pkg/mysql"
-    "github.com/pkg/errors"
-    "gorm.io/gorm"
+	"context"
+	feedModel "github.com/oigi/Magikarp/app/feed/internal/model"
+	"github.com/oigi/Magikarp/grpc/pb/feed"
+	"github.com/oigi/Magikarp/pkg/mysql"
+	"github.com/pkg/errors"
+	"gorm.io/gorm"
+	"strconv"
+	"time"
 )
 
 type FeedDao struct {
-    *gorm.DB
+	*gorm.DB
 }
 
 func NewFeedDao(ctx context.Context) *FeedDao {
-    return &FeedDao{
-        mysql.NewDBClient(ctx)}
+	return &FeedDao{
+		mysql.NewDBClient(ctx)}
 }
 
+// FindVideos 查找视频流
+func (f *FeedDao) FindVideos(req *feed.ListFeedReq) (videos []feedModel.Videos, err error) {
+	now := time.Now().UnixMilli()
+	latestTime, err := strconv.ParseInt(req.LastTime, 10, 64)
+	if err != nil {
+		var numError *strconv.NumError
+		if errors.As(err, &numError) {
+			latestTime = now
+		} else {
+			return
+		}
+	}
+	time.UnixMilli(latestTime)
+	if err := f.Where("created_at <= ?", time.UnixMilli(latestTime)).
+		Order("created_at DESC").
+		Limit(30).
+		Find(&videos).
+		Error; err != nil {
+		err = errors.Wrap(err, "查询视频失败")
+	}
+	return
+}
+
+// FindVideosByUser 根据用户id获取视频流
+func (f *FeedDao) FindVideosByUser(req *feed.QueryVideosReq) (videos []feedModel.Videos, err error) {
+	if err := f.DB.Where("id in video?", req.ActorId, req.VideoInfo). // TODO 修改查询语句
+										Find(&videos).
+										Error; err != nil {
+		err = errors.Wrap(err, "查询视频失败")
+	}
+	return
+}
+
+/*
 // FindAllVideos 获取全部视频
 func (f *FeedDao) FindAllVideos() (videos []feedModel.Videos, err error) {
     if err := f.Find(&videos).Error; err != nil {
@@ -90,4 +126,4 @@ func (f *FeedDao) DeleteVideoById(req *feed.DeleteVideoReq) (err error) {
         err = errors.Wrap(err, "")
     }
     return
-}
+}*/
