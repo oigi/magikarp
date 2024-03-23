@@ -2,6 +2,7 @@ package http
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/oigi/Magikarp/app/gateway/rpc"
 	"github.com/oigi/Magikarp/config"
 	"github.com/oigi/Magikarp/grpc/pb/feed"
 	"github.com/oigi/Magikarp/pkg/resp"
@@ -19,4 +20,10 @@ func ListFeed(ctx *gin.Context) {
 		return
 	}
 	// TODO 补充逻辑
+	r, err := rpc.ListFeed(ctx, &req)
+	if err != nil {
+		ctx.JSON(http.StatusOK, resp.RespError(ctx, err, "RPC服务调用失败"))
+		return
+	}
+	ctx.JSON(http.StatusOK, r)
 }

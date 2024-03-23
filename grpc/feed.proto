@@ -9,11 +9,11 @@ message Video {
   string cover_url = 4; // 视频封面图片地址
   int64 favorite_count = 5; // 视频被收藏的次数
   int64 comment_count = 6; // 视频的评论数量
-  bool is_favorite = 7; // 当前用户是否已收藏该视频
+//  bool is_favorite = 7; // 当前用户是否已收藏该视频
   string title = 8; // 视频的标题
   string create_time = 9; // 视频的创建时间
   int64 star_count = 10; // 视频的点赞数
-  bool is_star = 11; // 当前用户是否已点赞该视频
+//  bool is_star = 11; // 当前用户是否已点赞该视频
   string duration = 12; // 视频的持续时间
   int64 play_count = 13; // 视频播放量
 }
@@ -112,6 +112,9 @@ service Feed {
   rpc GetRankVideo(SearchVideoReq)returns(SearchVideoResp);// 推送排行榜视频
   rpc GetUserFeed(GetUserFeedReq)returns(GetUserFeedResp); //获取用户的流*/
 
-  rpc ListVideos(ListFeedReq) returns (ListFeedResp);
-  rpc QueryVideos(QueryVideosReq) returns (QueryVideosResp);
+//  rpc ListVideos(ListFeedReq) returns (ListFeedResp);
+//  rpc QueryVideos(QueryVideosReq) returns (QueryVideosResp);
+
+  rpc ListVideos(ListFeedReq) returns (stream ListFeedResp);  // 流式 rpc
+  rpc QueryVideos(stream QueryVideosReq) returns (stream QueryVideosResp);
 }

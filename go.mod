@@ -11,7 +11,6 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.11.1
 	github.com/redis/go-redis/v9 v9.5.1
-	github.com/songzhibin97/gkit v1.2.11
 	github.com/spf13/viper v1.18.2
 	go.etcd.io/etcd/client/v3 v3.5.12
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.49.0
