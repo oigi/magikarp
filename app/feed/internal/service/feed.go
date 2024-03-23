@@ -1,7 +1,6 @@
 package service
 
 import (
-	"context"
 	"github.com/oigi/Magikarp/app/feed/internal/dao"
 	feedModel "github.com/oigi/Magikarp/app/feed/internal/model"
 	"github.com/oigi/Magikarp/config"
@@ -26,43 +25,55 @@ func GetFeedServe() *FeedServe {
 	return FeedServeIns
 }
 
-func (f *FeedServe) ListVideos(ctx context.Context, req *feed.ListFeedReq) (
-	resp *feed.ListFeedResp, err error) {
-	client := dao.NewFeedDao(ctx)
+func (f *FeedServe) ListVideos(req *feed.ListFeedReq, stream feed.Feed_ListVideosServer) (
+	err error) {
+	client := dao.NewFeedDao(stream.Context())
 	find, err := client.FindVideos(req)
 	if err != nil {
-		resp.Code = e.ERROR
-		resp.Msg = "ListVideos video error"
 		config.LOG.Error("ListVideos video error", zap.Error(err))
+		if err := stream.Send(&feed.ListFeedResp{
+			Code: e.ERROR,
+			Msg:  "ListVideos video error",
+		}); err != nil {
+			return err
+		}
 		return
 	}
+
 	var nextTime int64
 	nextTime = find[len(find)-1].CreatedAt.Add(time.Duration(-1)).UnixMilli()
 
 	videos := queryDetailed(find)
-	resp = &feed.ListFeedResp{
+
+	if err := stream.Send(&feed.ListFeedResp{
 		Code:      e.SUCCESS,
 		Msg:       "find videos success",
 		NextTime:  nextTime,
 		VideoList: videos,
+	}); err != nil {
+		return err
 	}
 	return
 }
 
-func (f *FeedServe) QueryVideos(ctx context.Context, req *feed.QueryVideosReq) (
-	resp *feed.QueryVideosResp, err error) {
-	find, err := dao.NewFeedDao(ctx).FindVideosByUser(req)
+func (f *FeedServe) QueryVideos(req *feed.QueryVideosReq, stream feed.Feed_QueryVideosServer) (
+	err error) {
+	client := dao.NewFeedDao(stream.Context())
+	find, err := client.FindVideosByUser(req)
 	if err != nil {
-		resp.Code = e.ERROR
-		resp.Msg = "QueryVideos video error"
-		config.LOG.Error("QueryVideos video error", zap.Error(err))
+		return err
 	}
 	videos := queryDetailed(find)
-	resp = &feed.QueryVideosResp{
-		Code:      e.SUCCESS,
-		Msg:       "QueryVideos video success",
+
+	// 将视频数据发送给客户端流
+	if err := stream.Send(&feed.QueryVideosResp{
+		Code:      200,
+		Msg:       "传输成功",
 		VideoList: videos,
+	}); err != nil {
+		return err
 	}
+
 	return
 }
 
