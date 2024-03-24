@@ -7,34 +7,80 @@ import (
 	"github.com/oigi/Magikarp/pkg/consts/e"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
+	"io"
 )
 
 func ListFeed(ctx context.Context, req *feed.ListFeedReq) (resp *feed.ListFeedResp, err error) {
-	r, err := FeedClient.ListVideos(ctx, req)
+	stream, err := FeedClient.ListVideos(ctx, req)
 	if err != nil {
 		err = errors.WithMessage(err, "FeedClient.ListVideos error")
 		config.LOG.Error("", zap.Error(err))
 		return
 	}
-	if r.Code != e.SUCCESS {
-		err = errors.Wrap(errors.New("获取视频流失败"), "r.Code is unsuccessful")
-		config.LOG.Error("", zap.Error(err))
-		return
+	var response *feed.ListFeedResp
+	for {
+		resp, err := stream.Recv()
+		if err != nil {
+			if err == io.EOF {
+				break
+			}
+			err = errors.Wrap(err, "failed to receive response from ListVideos stream")
+			config.LOG.Error("", zap.Error(err))
+			return nil, err
+		}
+		response = resp
 	}
-	return r, err
+	if response.Code != e.SUCCESS {
+		err = errors.Wrap(errors.New("获取视频流失败"), "response code is unsuccessful")
+		config.LOG.Error("", zap.Error(err))
+		return nil, err
+	}
+	return response, nil
+
 }
 
 func QueryVideos(ctx context.Context, req *feed.QueryVideosReq) (resp *feed.QueryVideosResp, err error) {
-	r, err := FeedClient.QueryVideos(ctx, req)
+
+	stream, err := FeedClient.QueryVideos(ctx)
 	if err != nil {
-		err = errors.WithMessage(err, "FeedClient.QueryVideos error")
+		err = errors.WithMessage(err, "failed to initiate QueryVideos stream")
 		config.LOG.Error("", zap.Error(err))
-		return
+		return nil, err
 	}
-	if r.Code != e.SUCCESS {
-		err = errors.Wrap(errors.New("查询视频流失败"), "r.Code is unsuccessful")
+
+	err = stream.Send(req)
+	if err != nil {
+		err = errors.WithMessage(err, "failed to send QueryVideos request")
 		config.LOG.Error("", zap.Error(err))
-		return
+		return nil, err
 	}
-	return r, err
+
+	var response *feed.QueryVideosResp
+
+	for {
+		resp, err := stream.Recv()
+		if err != nil {
+			if err == io.EOF {
+				break
+			}
+			err = errors.Wrap(err, "failed to receive response from QueryVideos stream")
+			config.LOG.Error("", zap.Error(err))
+			return nil, err
+		}
+		response = resp
+	}
+
+	if err != nil {
+		err = errors.WithMessage(err, "failed to receive response from QueryVideos stream")
+		config.LOG.Error("", zap.Error(err))
+		return nil, err
+	}
+
+	if response.Code != e.SUCCESS {
+		err = errors.Wrap(errors.New("查询视频流失败"), "response code is unsuccessful")
+		config.LOG.Error("", zap.Error(err))
+		return nil, err
+	}
+
+	return response, nil
 }
