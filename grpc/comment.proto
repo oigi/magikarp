@@ -1,1 +1,5 @@
+syntax = "proto3";
+package comment;
+option go_package = "pb/comment;comment";
+
 
