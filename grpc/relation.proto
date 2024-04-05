@@ -2,4 +2,50 @@ syntax = "proto3";
 package relation;
 option go_package = "pb/relation;relation";
 
+message ActionReq {
+  int64 user_id = 1; // 用户id
+  int64 to_user_id = 2; // 对方用户id
+  int32 action_type = 3; // 1-关注 2-取消关注
+}
 
+message ActionResp {
+  int64 code = 1;
+  string msg = 2;
+}
+
+message FollowListReq {
+  int64 user_id = 1; // 用户id
+}
+
+message FollowListResp {
+  int64 code = 1;
+  string msg = 2;
+  repeated int64 follow_list = 3; // 关注列表
+}
+
+message FollowerListReq {
+  int64 user_id = 1; // 用户id
+}
+
+message FollowerListResp {
+  int64 code = 1;
+  string msg = 2;
+  repeated int64 follower_list = 3; // 粉丝列表
+}
+
+message FriendListReq {
+  int64 user_id = 1; // 用户id
+}
+
+message FriendListResp {
+  int64 code = 1;
+  string msg = 2;
+  repeated int64 friend_list = 3; // 好友列表
+}
+
+service RelationService {
+  rpc RelationAction (ActionReq) returns (ActionResp) {} // 关注操作
+  rpc RelationFollowList (FollowListReq) returns (FollowListResp) {} // 关注列表
+  rpc RelationFollowerList (FollowerListReq) returns (FollowerListResp) {} // 粉丝列表
+  rpc RelationFriendList (FriendListReq) returns (FriendListResp) {}// 好友列表
+}
