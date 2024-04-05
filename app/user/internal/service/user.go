@@ -35,7 +35,7 @@ func (u *UserServe) UserLogin(ctx context.Context, req *user.UserLoginReq) (resp
     }
 
     resp = &user.UserLoginResp{
-        UserId: r.ID,
+        User:   r.,
         Code:   e.SUCCESS,
         Msg:    "登陆成功",
         Email:  r.Email,
