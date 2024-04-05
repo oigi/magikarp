@@ -7,8 +7,10 @@ message User {
   string name = 2; // 用户名称
   int64 follow_count = 3; // 关注总数
   int64 follower_count = 4; // 粉丝总数
-  bool is_follow = 5; // true-已关注，false-未关注
-  string avatar = 6; // 用户头像Url
+  int64 sex = 5;
+  string dec = 6;
+  string email = 7;
+  string avatar = 8; // 用户头像Url
 }
 
 message UserLoginReq {
