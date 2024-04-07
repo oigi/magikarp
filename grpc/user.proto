@@ -11,6 +11,7 @@ message User {
   string dec = 6;
   string email = 7;
   string avatar = 8; // 用户头像Url
+  bool is_follow = 9; // true-已关注，false-未关注
 }
 
 message UserLoginReq {
@@ -35,7 +36,23 @@ message UserRegisterResp {
   string msg = 2;
 }
 
+message GetUserByIdReq {
+  int64 user_id = 1;
+}
+
+message GetUserByIdResp {
+  int64 code = 1;
+  string msg = 2;
+  User user = 3;
+}
+
+message FollowUserReq {
+  int64 user_id = 1;
+  int64 to_user_id = 2;
+}
+
 service UserService {
   rpc UserLogin(UserLoginReq) returns (UserLoginResp);
   rpc UserRegister(UserRegisterReq) returns (UserRegisterResp);
+  rpc GetUserById(GetUserByIdReq) returns (GetUserByIdResp);
 }

@@ -48,6 +48,24 @@ func (u *UserServe) UserRegister(ctx context.Context, req *user.UserRegisterReq)
 	if err != nil {
 		resp.Code = e.ERROR
 		resp.Msg = "注册失败"
+		config.LOG.Error("createUser error", zap.Error(err))
+	}
+	return
+}
+
+func (u *UserServe) GetUserById(ctx context.Context, req *user.GetUserByIdReq) (resp *user.GetUserByIdResp, err error) {
+	resp.Code = e.SUCCESS
+	r, err := dao.NewUserDao(ctx).GetUserInfoById(req)
+	if err != nil {
+		resp.Code = e.ERROR
+		resp.Msg = "获取用户信息失败"
+		return
+	}
+	userResp := queryDetailed(r)
+	resp = &user.GetUserByIdResp{
+		Code: e.SUCCESS,
+		Msg:  "获取用户信息成功",
+		User: userResp,
 	}
 	return
 }

@@ -24,6 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type UserServiceClient interface {
 	UserLogin(ctx context.Context, in *UserLoginReq, opts ...grpc.CallOption) (*UserLoginResp, error)
 	UserRegister(ctx context.Context, in *UserRegisterReq, opts ...grpc.CallOption) (*UserRegisterResp, error)
+	GetUserById(ctx context.Context, in *GetUserByIdReq, opts ...grpc.CallOption) (*GetUserByIdResp, error)
 }
 
 type userServiceClient struct {
@@ -52,12 +53,22 @@ func (c *userServiceClient) UserRegister(ctx context.Context, in *UserRegisterRe
 	return out, nil
 }
 
+func (c *userServiceClient) GetUserById(ctx context.Context, in *GetUserByIdReq, opts ...grpc.CallOption) (*GetUserByIdResp, error) {
+	out := new(GetUserByIdResp)
+	err := c.cc.Invoke(ctx, "/user.UserService/GetUserById", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility
 type UserServiceServer interface {
 	UserLogin(context.Context, *UserLoginReq) (*UserLoginResp, error)
 	UserRegister(context.Context, *UserRegisterReq) (*UserRegisterResp, error)
+	GetUserById(context.Context, *GetUserByIdReq) (*GetUserByIdResp, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -70,6 +81,9 @@ func (UnimplementedUserServiceServer) UserLogin(context.Context, *UserLoginReq) 
 }
 func (UnimplementedUserServiceServer) UserRegister(context.Context, *UserRegisterReq) (*UserRegisterResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UserRegister not implemented")
+}
+func (UnimplementedUserServiceServer) GetUserById(context.Context, *GetUserByIdReq) (*GetUserByIdResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserById not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 
@@ -120,6 +134,24 @@ func _UserService_UserRegister_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_GetUserById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserByIdReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetUserById(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.UserService/GetUserById",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetUserById(ctx, req.(*GetUserByIdReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -134,6 +166,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UserRegister",
 			Handler:    _UserService_UserRegister_Handler,
+		},
+		{
+			MethodName: "GetUserById",
+			Handler:    _UserService_GetUserById_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
