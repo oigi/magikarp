@@ -2,27 +2,32 @@ syntax="proto3";
 package user;
 option go_package = "pb/user;user";
 
-
+message User {
+  int64 id = 1; // 用户id
+  string name = 2; // 用户名称
+  int64 follow_count = 3; // 关注总数
+  int64 follower_count = 4; // 粉丝总数
+  int64 sex = 5;
+  string dec = 6;
+  string email = 7;
+  string avatar = 8; // 用户头像Url
+}
 
 message UserLoginReq {
   string email = 1;
   string password = 2;
-  reserved "number";
 }
 
 message UserLoginResp {
   int64 code = 1;
-  int64 user_id = 2;
-  string msg = 3;
-  string email = 4;
-  reserved "number";
+  string msg = 2;
+  User user = 3;
 }
 
 message UserRegisterReq {
   string email = 1;
   string nick_name = 2;
   string password = 3;
-  reserved "number";
 }
 
 message UserRegisterResp {

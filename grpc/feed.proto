@@ -16,10 +16,11 @@ message Video {
 //  bool is_star = 11; // 当前用户是否已点赞该视频
   string duration = 12; // 视频的持续时间
   int64 play_count = 13; // 视频播放量
+  bool is_follow = 14; // 当前用户是否关注该视频作者
 }
 
 message ListFeedReq {
-  string last_time = 1;
+  int64 last_time = 1;
   int64 actor_id = 2;
 }
 

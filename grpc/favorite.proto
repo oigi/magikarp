@@ -1,0 +1,60 @@
+syntax = "proto3";
+package favorite;
+option go_package = "pb/favorite;favorite";
+
+import "feed.proto";
+
+message FavoriteActionReq  {
+    int64 user_id = 1;
+    int64 video_id = 2;
+    int32 action_type = 3; // 1: 点赞，2: 取消点赞
+}
+
+message FavoriteActionResp  {
+    int32 code = 1;
+    string msg = 2;
+}
+
+message FavoriteListReq  {
+    int32 user_id = 1;
+}
+
+message FavoriteListResp  {
+    int32 code = 1;
+    string msg = 2;
+    repeated feed.Video video_list = 3;
+}
+
+message FavoriteCountReq  {
+    repeated int64 video_id_list = 1;
+}
+
+message FavoriteCountResp  {
+    int32 code = 1;
+    string msg = 2;
+    map<int64, int64> video_favorite_count = 3;
+}
+
+message IsFavoriteReq {
+    int64 user_id = 1;
+    repeated int64 video_id_list = 2; // 用户点赞的视频列表
+}
+
+message IsFavoriteResp {
+    int32 code = 1;
+    string msg = 2;
+    map<int64, bool> is_favorite = 3; // 视频ID到是否点赞的映射
+}
+
+message StarActionReq {
+    int64 user_id = 1;
+    int64 video_id = 2;
+    int32 action_type
+}
+
+service FavoriteService {
+    rpc FavoriteAction(FavoriteActionReq) returns (FavoriteActionResp); // 点赞操作
+    rpc FavoriteList(FavoriteListReq) returns (FavoriteListResp);// 获取点赞列表
+    rpc FavoriteCount(FavoriteCountReq) returns (FavoriteCountResp);// 获取点赞数量
+    rpc IsFavorite(IsFavoriteReq) returns (IsFavoriteResp);// 判断是否点赞
+}

@@ -42,3 +42,7 @@ func UserRegister(ctx context.Context, req *user.UserRegisterReq) (resp *user.Us
 
     return
 }
+
+func GetUserById() {
+
+}

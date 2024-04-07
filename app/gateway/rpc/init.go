@@ -3,10 +3,12 @@ package rpc
 import (
 	"context"
 	"fmt"
-	"github.com/oigi/Magikarp/app/gateway/consts"
 	"github.com/oigi/Magikarp/config"
+	"github.com/oigi/Magikarp/grpc/pb/comment"
+	"github.com/oigi/Magikarp/grpc/pb/favorite"
 	"github.com/oigi/Magikarp/grpc/pb/feed"
 	"github.com/oigi/Magikarp/grpc/pb/user"
+	"github.com/oigi/Magikarp/pkg/consts"
 	"github.com/oigi/Magikarp/pkg/discovery"
 	"github.com/oigi/Magikarp/pkg/prometheus"
 	"github.com/pkg/errors"
@@ -20,9 +22,11 @@ import (
 var (
 	Register *discovery.Resolver
 	ctx      context.Context
-	//CancelFunc context.CancelFunc
-	UserClient user.UserServiceClient
-	FeedClient feed.FeedClient
+
+	UserClient     user.UserServiceClient
+	FeedClient     feed.FeedClient
+	FavoriteClient favorite.FavoriteServiceClient
+	CommentClient  comment.CommentServiceClient
 )
 
 // Init 初始化所有的rpc请求
@@ -34,6 +38,8 @@ func Init() {
 	defer Register.Close()
 	initClient(config.CONFIG.Etcd.Domain[consts.UserServiceName].Name, &UserClient)
 	initClient(config.CONFIG.Etcd.Domain[consts.FeedServiceName].Name, &FeedClient)
+	initClient(config.CONFIG.Etcd.Domain[consts.FavoriteServiceName].Name, &FavoriteClient)
+	initClient(config.CONFIG.Etcd.Domain[consts.CommentServiceName].Name, &CommentClient)
 }
 
 // initClient 初始化所有的rpc客户端
@@ -49,6 +55,12 @@ func initClient(serviceName string, client interface{}) {
 	switch c := client.(type) {
 	case *user.UserServiceClient:
 		*c = user.NewUserServiceClient(conn)
+	case *favorite.FavoriteServiceClient:
+		*c = favorite.NewFavoriteServiceClient(conn)
+	case *feed.FeedClient:
+		*c = feed.NewFeedClient(conn)
+	case *comment.CommentServiceClient:
+		*c = comment.NewCommentServiceClient(conn)
 	default:
 		panic("unsupported worker type")
 	}

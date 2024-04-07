@@ -12,4 +12,6 @@ type User struct {
 	Dec                string `json:"dec" gorm:"comment:'个性签名'"`                                   // 个性签名
 	Enable             int    `json:"enable" gorm:"default:1;comment:用户是否被冻结 0停用 1正常 2冻结"`         // 用户是否被冻结 1正常 2冻结
 	DefaultFavoritesID int    `json:"default_favorites_id" gorm:"comment:默认收藏夹ID;NOT NULL"`
+	FollowCount        int    `json:"follow_count" gorm:"comment:关注数"`
+	FollowerCount      int    `json:"follower_count" gorm:"comment:粉丝数"`
 }
