@@ -7,9 +7,9 @@
 package comment
 
 import (
+	user "github.com/oigi/Magikarp/grpc/pb/user"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	user "pb/user"
 	reflect "reflect"
 	sync "sync"
 )

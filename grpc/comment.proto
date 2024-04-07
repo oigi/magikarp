@@ -1,6 +1,6 @@
 syntax = "proto3";
 package comment;
-option go_package = "pb/comment;comment";
+option go_package = "pb/comment";
 
 import "user.proto";
 

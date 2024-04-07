@@ -23,7 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type FeedClient interface {
 	ListVideos(ctx context.Context, in *ListFeedReq, opts ...grpc.CallOption) (Feed_ListVideosClient, error)
-	QueryVideos(ctx context.Context, opts ...grpc.CallOption) (Feed_QueryVideosClient, error)
+	QueryVideos(ctx context.Context, in *QueryVideosReq, opts ...grpc.CallOption) (Feed_QueryVideosClient, error)
 }
 
 type feedClient struct {
@@ -66,27 +66,28 @@ func (x *feedListVideosClient) Recv() (*ListFeedResp, error) {
 	return m, nil
 }
 
-func (c *feedClient) QueryVideos(ctx context.Context, opts ...grpc.CallOption) (Feed_QueryVideosClient, error) {
+func (c *feedClient) QueryVideos(ctx context.Context, in *QueryVideosReq, opts ...grpc.CallOption) (Feed_QueryVideosClient, error) {
 	stream, err := c.cc.NewStream(ctx, &Feed_ServiceDesc.Streams[1], "/feed.Feed/QueryVideos", opts...)
 	if err != nil {
 		return nil, err
 	}
 	x := &feedQueryVideosClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
 	return x, nil
 }
 
 type Feed_QueryVideosClient interface {
-	Send(*QueryVideosReq) error
 	Recv() (*QueryVideosResp, error)
 	grpc.ClientStream
 }
 
 type feedQueryVideosClient struct {
 	grpc.ClientStream
-}
-
-func (x *feedQueryVideosClient) Send(m *QueryVideosReq) error {
-	return x.ClientStream.SendMsg(m)
 }
 
 func (x *feedQueryVideosClient) Recv() (*QueryVideosResp, error) {
@@ -102,7 +103,7 @@ func (x *feedQueryVideosClient) Recv() (*QueryVideosResp, error) {
 // for forward compatibility
 type FeedServer interface {
 	ListVideos(*ListFeedReq, Feed_ListVideosServer) error
-	QueryVideos(Feed_QueryVideosServer) error
+	QueryVideos(*QueryVideosReq, Feed_QueryVideosServer) error
 	mustEmbedUnimplementedFeedServer()
 }
 
@@ -113,7 +114,7 @@ type UnimplementedFeedServer struct {
 func (UnimplementedFeedServer) ListVideos(*ListFeedReq, Feed_ListVideosServer) error {
 	return status.Errorf(codes.Unimplemented, "method ListVideos not implemented")
 }
-func (UnimplementedFeedServer) QueryVideos(Feed_QueryVideosServer) error {
+func (UnimplementedFeedServer) QueryVideos(*QueryVideosReq, Feed_QueryVideosServer) error {
 	return status.Errorf(codes.Unimplemented, "method QueryVideos not implemented")
 }
 func (UnimplementedFeedServer) mustEmbedUnimplementedFeedServer() {}
@@ -151,12 +152,15 @@ func (x *feedListVideosServer) Send(m *ListFeedResp) error {
 }
 
 func _Feed_QueryVideos_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(FeedServer).QueryVideos(&feedQueryVideosServer{stream})
+	m := new(QueryVideosReq)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(FeedServer).QueryVideos(m, &feedQueryVideosServer{stream})
 }
 
 type Feed_QueryVideosServer interface {
 	Send(*QueryVideosResp) error
-	Recv() (*QueryVideosReq, error)
 	grpc.ServerStream
 }
 
@@ -166,14 +170,6 @@ type feedQueryVideosServer struct {
 
 func (x *feedQueryVideosServer) Send(m *QueryVideosResp) error {
 	return x.ServerStream.SendMsg(m)
-}
-
-func (x *feedQueryVideosServer) Recv() (*QueryVideosReq, error) {
-	m := new(QueryVideosReq)
-	if err := x.ServerStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
 }
 
 // Feed_ServiceDesc is the grpc.ServiceDesc for Feed service.
@@ -193,7 +189,6 @@ var Feed_ServiceDesc = grpc.ServiceDesc{
 			StreamName:    "QueryVideos",
 			Handler:       _Feed_QueryVideos_Handler,
 			ServerStreams: true,
-			ClientStreams: true,
 		},
 	},
 	Metadata: "feed.proto",

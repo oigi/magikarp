@@ -1,7 +1,7 @@
 syntax = "proto3";
 import "feed.proto";
 package publish;
-option go_package = "pb/publish;publish";
+option go_package = "pb/publish";
 
 message CreateVideoRequest {
   int64 actor_id = 1; // 用户id

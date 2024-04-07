@@ -1,6 +1,6 @@
 syntax="proto3";
 package user;
-option go_package = "pb/user;user";
+option go_package = "pb/user";
 
 message User {
   int64 id = 1; // 用户id

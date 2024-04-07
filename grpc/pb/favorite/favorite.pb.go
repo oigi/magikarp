@@ -7,9 +7,9 @@
 package favorite
 
 import (
+	feed "github.com/oigi/Magikarp/grpc/pb/feed"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	feed "pb/feed"
 	reflect "reflect"
 	sync "sync"
 )

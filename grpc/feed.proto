@@ -1,27 +1,28 @@
 syntax = "proto3";
 package feed;
-option go_package = "pb/feed;feed";
+option go_package = "pb/feed";
+
+import "user.proto";
 
 message Video {
   int64 id = 1; // 视频唯一标识ID
-  int64 uid = 2;// 视频作者的用户信息
+  user.User author = 2;// 视频作者的用户信息
   string play_url = 3; // 视频播放地址
   string cover_url = 4; // 视频封面图片地址
   int64 favorite_count = 5; // 视频被收藏的次数
   int64 comment_count = 6; // 视频的评论数量
 //  bool is_favorite = 7; // 当前用户是否已收藏该视频
   string title = 8; // 视频的标题
-  string create_time = 9; // 视频的创建时间
   int64 star_count = 10; // 视频的点赞数
 //  bool is_star = 11; // 当前用户是否已点赞该视频
   string duration = 12; // 视频的持续时间
   int64 play_count = 13; // 视频播放量
-  bool is_follow = 14; // 当前用户是否关注该视频作者
+  bool is_favorite = 14; // 当前用户是否点赞该视频作者
 }
 
 message ListFeedReq {
   int64 last_time = 1;
-  int64 actor_id = 2;
+  int64 user_id = 2;
 }
 
 message ListFeedResp {
@@ -117,5 +118,5 @@ service Feed {
 //  rpc QueryVideos(QueryVideosReq) returns (QueryVideosResp);
 
   rpc ListVideos(ListFeedReq) returns (stream ListFeedResp);  // 流式 rpc
-  rpc QueryVideos(stream QueryVideosReq) returns (stream QueryVideosResp);
+  rpc QueryVideos(QueryVideosReq) returns (stream QueryVideosResp);
 }

@@ -1,6 +1,6 @@
 syntax = "proto3";
 package relation;
-option go_package = "pb/relation;relation";
+option go_package = "pb/relation";
 
 message ActionReq {
   int64 user_id = 1; // 用户id
