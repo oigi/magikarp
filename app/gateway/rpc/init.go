@@ -38,8 +38,8 @@ func Init() {
 	defer Register.Close()
 	initClient(config.CONFIG.Etcd.Domain[consts.UserServiceName].Name, &UserClient)
 	initClient(config.CONFIG.Etcd.Domain[consts.FeedServiceName].Name, &FeedClient)
-	initClient(config.CONFIG.Etcd.Domain[consts.FavoriteServiceName].Name, &FavoriteClient)
-	initClient(config.CONFIG.Etcd.Domain[consts.CommentServiceName].Name, &CommentClient)
+	//initClient(config.CONFIG.Etcd.Domain[consts.FavoriteServiceName].Name, &FavoriteClient)
+	//initClient(config.CONFIG.Etcd.Domain[consts.CommentServiceName].Name, &CommentClient)
 }
 
 // initClient 初始化所有的rpc客户端

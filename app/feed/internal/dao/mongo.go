@@ -19,7 +19,7 @@ type MongoFeedDao struct {
 
 func NewMongoClient(ctx context.Context) *MongoFeedDao {
 	return &MongoFeedDao{
-		mongodb.InitMongoClient(ctx),
+		mongodb.InitMongoClient(),
 		ctx,
 	}
 }

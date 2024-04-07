@@ -11,8 +11,8 @@ import (
 
 var mongoClient *mongo.Client
 
-func InitMongoClient(ctx context.Context) *mongo.Client {
-	if err := mgClient(ctx); err != nil {
+func InitMongoClient() *mongo.Client {
+	if err := mgClient(); err != nil {
 		config.LOG.Error("Failed to initialize MongoDB client", zap.Error(err))
 		return nil
 	}
@@ -20,7 +20,7 @@ func InitMongoClient(ctx context.Context) *mongo.Client {
 }
 
 // mgClient 初始化 MongoDB 客户端
-func mgClient(ctx context.Context) error {
+func mgClient() error {
 	if mongoClient != nil {
 		return nil // 如果已经初始化过了，则直接返回
 	}
@@ -32,7 +32,7 @@ func mgClient(ctx context.Context) error {
 	}
 
 	var err error
-	mongoClient, err = mongo.Connect(ctx, options.Client().ApplyURI(uri))
+	mongoClient, err = mongo.Connect(context.Background(), options.Client().ApplyURI(uri))
 	if err != nil {
 		return err
 	}
@@ -58,9 +58,9 @@ func mgClient(ctx context.Context) error {
 }
 
 // CloseMongoClient 关闭 MongoDB 客户端连接
-func CloseMongoClient(ctx context.Context) {
+func CloseMongoClient() {
 	if mongoClient != nil {
-		err := mongoClient.Disconnect(ctx)
+		err := mongoClient.Disconnect(context.Background())
 		if err != nil {
 			config.LOG.Error("Failed to close MongoDB client", zap.Error(err))
 		}

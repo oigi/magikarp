@@ -25,7 +25,9 @@ func main() {
 	etcdAddress := []string{config.CONFIG.Etcd.Address}
 	// 服务注册
 	etcdRegister := discovery.NewRegister(etcdAddress)
+
 	grpcAddress := config.CONFIG.Etcd.Services[consts.UserServiceName].Addr[0]
+
 	defer etcdRegister.Stop()
 	userNode := discovery.Server{
 		Name: config.CONFIG.Etcd.Domain[consts.UserServiceName].Name,

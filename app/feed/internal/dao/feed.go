@@ -1,17 +1,6 @@
 package dao
 
-import (
-	"context"
-	feedModel "github.com/oigi/Magikarp/app/feed/internal/model"
-	"github.com/oigi/Magikarp/grpc/pb/feed"
-	"github.com/oigi/Magikarp/pkg/mysql"
-	"github.com/pkg/errors"
-	"gorm.io/gorm"
-	"strconv"
-	"time"
-)
-
-type FeedDao struct {
+/*type FeedDao struct {
 	*gorm.DB
 }
 
@@ -53,7 +42,10 @@ func (f *FeedDao) FindVideosByUser(req *feed.QueryVideosReq) (videos []feedModel
 	return
 }
 
-/*
+
+*/
+
+/* 更旧
 // FindAllVideos 获取全部视频
 func (f *FeedDao) FindAllVideos() (videos []feedModel.Videos, err error) {
     if err := f.Find(&videos).Error; err != nil {

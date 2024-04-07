@@ -1,14 +1,8 @@
 package service
 
 import (
-	"github.com/oigi/Magikarp/app/feed/internal/dao"
-	feedModel "github.com/oigi/Magikarp/app/feed/internal/model"
-	"github.com/oigi/Magikarp/config"
 	"github.com/oigi/Magikarp/grpc/pb/feed"
-	"github.com/oigi/Magikarp/pkg/consts/e"
-	"go.uber.org/zap"
 	"sync"
-	"time"
 )
 
 var FeedServeOnce sync.Once
@@ -25,6 +19,7 @@ func GetFeedServe() *FeedServe {
 	return FeedServeIns
 }
 
+/*
 func (f *FeedServe) ListVideos(req *feed.ListFeedReq, stream feed.Feed_ListVideosServer) (
 	err error) {
 	client := dao.NewFeedDao(stream.Context())
@@ -87,13 +82,12 @@ func queryDetailed(videos []feedModel.Videos) (respVideoList []*feed.Video) {
 			defer wg.Done()
 			videoChan <- &feed.Video{
 				Id:            v.ID,
-				Uid:           v.AuthorId,
+				//Author:        v.AuthorId,
 				PlayUrl:       v.PlayUrl,
 				CoverUrl:      v.CoverUrl,
 				FavoriteCount: v.FavoriteCount,
 				CommentCount:  v.CommentCount,
 				Title:         v.Title,
-				CreateTime:    v.CreatedAt.Format(time.RFC3339), // 格式化时间
 				StarCount:     v.StarCount,
 				Duration:      v.Duration.String(), // Duration转换为字符串
 				PlayCount:     v.PlayCount,
@@ -109,3 +103,4 @@ func queryDetailed(videos []feedModel.Videos) (respVideoList []*feed.Video) {
 
 	return respVideoList
 }
+*/

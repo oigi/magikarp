@@ -2,7 +2,7 @@ package util
 
 import "strconv"
 
-/*
+/*JudgeTimeDiff
 以下不等式是否成立：
 t1 - t2 >= diff
 */

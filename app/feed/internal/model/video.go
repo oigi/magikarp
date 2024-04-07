@@ -19,4 +19,5 @@ type Videos struct {
 	Duration      time.Duration `json:"duration" gorm:"column:duration;type:varchar(255);comment:视频时长"`
 	Label         string        `json:"label" gorm:"column:label;type:varchar(255);comment:视频标签;NOT NULL"`
 	Open          bool          `json:"open" gorm:"column:open;default:'true';comment:是否公开"`
+	Timestamp     string 		`json:"timestamp" gorm:"column:timestamp; comment:时间戳"`
 }

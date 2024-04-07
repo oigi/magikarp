@@ -14,6 +14,13 @@ redis:
   addr: 127.0.0.1:6379
   password: "123456"
 
+mongo:
+  host: 127.0.0.1
+  port: "27017"
+  username: "root"
+  password: "123456"
+
+
 zap:
   level: info
   prefix: '[github.com/oigi/Magikarp]'
@@ -50,20 +57,61 @@ etcd:
       metrics:
         - 127.0.0.1:30002
 
+    feed:
+      name: feed
+      loadBalance: true
+      addr:
+        - 127.0.0.1:20003
+      metrics:
+        - 127.0.0.1:30003
+
+    favorite:
+      name: favorite
+      loadBalance: false
+      addr:
+        - 127.0.0.1:20004
+      metrics:
+        - 127.0.0.1:30004
+
+    comment:
+      name: comment
+      loadBalance: false
+      addr:
+        - 127.0.0.1:20005
+      metrics:
+        - 127.0.0.1:30005
+
+    publish:
+      name: publish
+      loadBalance: false
+      addr:
+        - 127.0.0.1:20006
+      metrics:
+        - 127.0.0.1:30006
+
+    relation:
+      name: relation
+      loadBalance: false
+      addr:
+        - 127.0.0.1:20007
+      metrics:
+        - 127.0.0.1:30007
 
   domain:
     user:
       name: user
     favorite:
       name: favorite
-    search_engine:
-      name: search_engine
-    index_platform:
-      name: index_platform
     mapreduce:
       name: mapreduce
-    search_vector:
-      name: search_vector
+    publish:
+      name: publish
+    relation:
+      name: relation
+    comment:
+      name: comment
+    feed:
+      name: feed
 
   milvus:
     host: 127.0.0.1
