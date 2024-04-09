@@ -24,7 +24,6 @@ const _ = grpc.SupportPackageIsVersion7
 type PublishServiceClient interface {
 	CreateVideo(ctx context.Context, in *CreateVideoRequest, opts ...grpc.CallOption) (*CreateVideoResponse, error)
 	ListVideo(ctx context.Context, in *ListVideoRequest, opts ...grpc.CallOption) (*ListVideoResponse, error)
-	CountVideo(ctx context.Context, in *CountVideoRequest, opts ...grpc.CallOption) (*CountVideoResponse, error)
 }
 
 type publishServiceClient struct {
@@ -53,22 +52,12 @@ func (c *publishServiceClient) ListVideo(ctx context.Context, in *ListVideoReque
 	return out, nil
 }
 
-func (c *publishServiceClient) CountVideo(ctx context.Context, in *CountVideoRequest, opts ...grpc.CallOption) (*CountVideoResponse, error) {
-	out := new(CountVideoResponse)
-	err := c.cc.Invoke(ctx, "/publish.PublishService/CountVideo", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // PublishServiceServer is the server API for PublishService service.
 // All implementations must embed UnimplementedPublishServiceServer
 // for forward compatibility
 type PublishServiceServer interface {
 	CreateVideo(context.Context, *CreateVideoRequest) (*CreateVideoResponse, error)
 	ListVideo(context.Context, *ListVideoRequest) (*ListVideoResponse, error)
-	CountVideo(context.Context, *CountVideoRequest) (*CountVideoResponse, error)
 	mustEmbedUnimplementedPublishServiceServer()
 }
 
@@ -81,9 +70,6 @@ func (UnimplementedPublishServiceServer) CreateVideo(context.Context, *CreateVid
 }
 func (UnimplementedPublishServiceServer) ListVideo(context.Context, *ListVideoRequest) (*ListVideoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListVideo not implemented")
-}
-func (UnimplementedPublishServiceServer) CountVideo(context.Context, *CountVideoRequest) (*CountVideoResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CountVideo not implemented")
 }
 func (UnimplementedPublishServiceServer) mustEmbedUnimplementedPublishServiceServer() {}
 
@@ -134,24 +120,6 @@ func _PublishService_ListVideo_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PublishService_CountVideo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CountVideoRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PublishServiceServer).CountVideo(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/publish.PublishService/CountVideo",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PublishServiceServer).CountVideo(ctx, req.(*CountVideoRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // PublishService_ServiceDesc is the grpc.ServiceDesc for PublishService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -166,10 +134,6 @@ var PublishService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListVideo",
 			Handler:    _PublishService_ListVideo_Handler,
-		},
-		{
-			MethodName: "CountVideo",
-			Handler:    _PublishService_CountVideo_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -18,8 +18,7 @@ message CreateVideoResponse {
 }
 
 message ListVideoRequest{
-  int64 actor_id = 1; // 用户id
-  int64 user_id = 2; // 被请求查询的用户id
+  int64 user_id = 1; // 被请求查询的用户id
 }
 
 message ListVideoResponse{
@@ -28,18 +27,7 @@ message ListVideoResponse{
   repeated feed.Video video_list = 3; // 视频列表
 }
 
-message CountVideoRequest{
-  int64 user_id = 1; // 用户id
-}
-
-message CountVideoResponse{
-  int64 code = 1; // 状态码，0-成功，其他值-失败
-  string msg = 2; // 返回状态描述
-  int64 count = 3; // 视频数量
-}
-
 service PublishService {
   rpc CreateVideo(CreateVideoRequest) returns (CreateVideoResponse) {}
   rpc ListVideo(ListVideoRequest) returns (ListVideoResponse) {}
-  rpc CountVideo(CountVideoRequest) returns (CountVideoResponse) {}
 }
