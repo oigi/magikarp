@@ -6,7 +6,7 @@ import (
 )
 
 type Model struct {
-	ID        int64          `gorm:"primary_key;AUTO_INCREMENT:10000"`
+	ID        int64          `gorm:"auto_increment;primarykey;AUTO_INCREMENT=1000"`
 	CreatedAt time.Time      // 创建时间
 	UpdatedAt time.Time      // 更新时间
 	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"` // 删除时间
