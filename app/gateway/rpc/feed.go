@@ -1,5 +1,34 @@
 package rpc
 
+import (
+    "context"
+    "github.com/oigi/Magikarp/grpc/pb/feed"
+    "io"
+)
+
+func GetVideoById(ctx context.Context, req *feed.QueryVideosReq, stream feed.Feed_ListVideosServer) error {
+    queryStream, err := FeedClient.QueryVideos(ctx, req)
+    if err != nil {
+        return err
+    }
+    defer queryStream.CloseSend()
+    for {
+        video, err := queryStream.Recv()
+        if err == io.EOF {
+            break
+        }
+        if err != nil {
+            return err
+        }
+
+        if err := stream.SendMsg(video); err != nil {
+            return err
+        }
+    }
+
+    return nil
+}
+
 //func ListFeed(ctx context.Context, req *feed.ListFeedReq) (resp *feed.ListFeedResp, err error) {
 //	r, err := FeedClient.ListVideos(ctx, req)
 //	if err != nil {
