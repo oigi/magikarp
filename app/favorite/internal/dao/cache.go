@@ -59,3 +59,23 @@ func QueryFavoriteListInCache(ctx context.Context, userId int64) ([]int64, error
     }
     return result, nil
 }
+
+func QueryFavoriteCount(videoIds []int64) (map[int64]int64, error) {
+    rdb := RedisClient[consts.FavCache]
+    counts := make(map[int64]int64)
+
+    // 查询点赞数量
+    for _, videoId := range videoIds {
+        countStr, err := rdb.Client.Get(context.Background(), strconv.FormatInt(videoId, 10)).Result()
+        if err != nil {
+            return nil, err
+        }
+        count, err := strconv.ParseInt(countStr, 10, 64)
+        if err != nil {
+            return nil, err
+        }
+        counts[videoId] = count
+    }
+
+    return counts, nil
+}
