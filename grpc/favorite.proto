@@ -16,7 +16,7 @@ message FavoriteActionResp  {
 }
 
 message FavoriteListReq  {
-    int32 user_id = 1;
+    int64 user_id = 1;
 }
 
 message FavoriteListResp  {
