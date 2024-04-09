@@ -1,20 +1,16 @@
 package service
 
 import (
-	"github.com/oigi/Magikarp/app/feed/internal/dao"
-	"github.com/oigi/Magikarp/grpc/pb/feed"
+    "context"
+    "github.com/oigi/Magikarp/app/feed/internal/dao"
+    "github.com/oigi/Magikarp/grpc/pb/feed"
 )
 
-func (f *FeedServe) QueryVideos(req *feed.QueryVideosReq, stream feed.Feed_QueryVideosServer) (
-	err error) {
-	mongoDao := dao.NewMongoClient(stream.Context())
-	date, err := mongoDao.GetVideoByUserIdInMongo(int(req.ActorId))
-	if err != nil {
-		return err
-	}
-	resp, _ := PackVideoInfoResp(date)
-	if err := stream.SendMsg(resp); err != nil {
-		return err
-	}
-	return nil
+func (f *FeedServe) GetVideoById(ctx context.Context, req *feed.QueryVideosReq) (resp *feed.Video, err error) {
+    mongoDao := dao.NewMongoClient(ctx)
+    date, err := mongoDao.GetVideoByUserIdInMongo(int(req.VideoId))
+    if err != nil {
+        return &feed.Video{}, nil
+    }
+    return PackVideoInfoResp(date)
 }

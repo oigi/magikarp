@@ -11,7 +11,6 @@ message Video {
   string cover_url = 4; // 视频封面图片地址
   int64 favorite_count = 5; // 视频被收藏的次数
   int64 comment_count = 6; // 视频的评论数量
-//  bool is_favorite = 7; // 当前用户是否已收藏该视频
   string title = 8; // 视频的标题
   int64 star_count = 10; // 视频的点赞数
 //  bool is_star = 11; // 当前用户是否已点赞该视频
@@ -33,17 +32,11 @@ message ListFeedResp {
 }
 
 message QueryVideosReq {
-  int64 actor_id = 1;
-  repeated int64 video_info = 2;
-}
-
-message QueryVideosResp {
-  int64 code = 1;
-  string msg = 2;
-  repeated Video video_list = 3;
+  int64 video_id = 1;
+  int64 search_id = 2 ;
 }
 
 service Feed {
   rpc ListVideos(ListFeedReq) returns (stream ListFeedResp);  // 流式 rpc
-  rpc QueryVideos(QueryVideosReq) returns (stream QueryVideosResp);
+  rpc GetVideoById (QueryVideosReq) returns (Video); // 根据视频id返回一个视频
 }

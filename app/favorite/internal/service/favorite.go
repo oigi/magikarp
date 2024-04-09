@@ -72,8 +72,7 @@ func convertVideoList(list []int64) (resp favorite.FavoriteListResp, err error) 
 	var videoList []*feed.Video
 	for _, i := range list {
 		err := rpc.GetVideoById(context.Background(), &feed.QueryVideosReq{
-			ActorId:   i,
-			VideoInfo: nil,
+
 		}, nil)
 		if err != nil {
 			continue
