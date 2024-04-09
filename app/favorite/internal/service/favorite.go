@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"github.com/oigi/Magikarp/grpc/pb/favorite"
 	"sync"
 )
@@ -9,7 +10,7 @@ var FeedServeOnce sync.Once
 var FeedServeIns *FavoriteServe
 
 type FavoriteServe struct {
-	favorite.UnimplementedFavoriteServer
+	favorite.UnimplementedFavoriteServiceServer
 }
 
 func GetFeedServe() *FavoriteServe {
@@ -19,7 +20,18 @@ func GetFeedServe() *FavoriteServe {
 	return FeedServeIns
 }
 
-//func (*FavoriteServe) SyncFavorite(ctx context.Context, req *favorite.SyncFavoriteReq) (resp *favorite.SyncFavoriteResp, err error) {
-//	client := dao.NewFavoriteDao(ctx)
-//	find := client.
-//} TODO
+func (f *FavoriteServe) FavoriteAction(ctx context.Context, req *favorite.FavoriteActionReq) (resp *favorite.FavoriteActionResp, err error) {
+
+}
+
+func (f *FavoriteServe) FavoriteList(ctx context.Context, req *favorite.FavoriteListReq) (resp *favorite.FavoriteListResp, err error) {
+
+}
+
+func (f *FavoriteServe) IsFavorite(ctx context.Context, req *favorite.IsFavoriteReq) (resp *favorite.IsFavoriteResp, err error) {
+
+}
+
+func (f *FavoriteServe) FavoriteCount(ctx context.Context, req *favorite.FavoriteCountReq) (resp *favorite.FavoriteCountResp, err error) {
+
+}
