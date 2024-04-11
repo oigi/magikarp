@@ -22,7 +22,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type FeedClient interface {
-	ListVideos(ctx context.Context, in *ListFeedReq, opts ...grpc.CallOption) (Feed_ListVideosClient, error)
+	ListVideos(ctx context.Context, in *ListFeedReq, opts ...grpc.CallOption) (*ListFeedResp, error)
 	GetVideoById(ctx context.Context, in *QueryVideosReq, opts ...grpc.CallOption) (*Video, error)
 }
 
@@ -34,36 +34,13 @@ func NewFeedClient(cc grpc.ClientConnInterface) FeedClient {
 	return &feedClient{cc}
 }
 
-func (c *feedClient) ListVideos(ctx context.Context, in *ListFeedReq, opts ...grpc.CallOption) (Feed_ListVideosClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Feed_ServiceDesc.Streams[0], "/feed.Feed/ListVideos", opts...)
+func (c *feedClient) ListVideos(ctx context.Context, in *ListFeedReq, opts ...grpc.CallOption) (*ListFeedResp, error) {
+	out := new(ListFeedResp)
+	err := c.cc.Invoke(ctx, "/feed.Feed/ListVideos", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &feedListVideosClient{stream}
-	if err := x.ClientStream.SendMsg(in); err != nil {
-		return nil, err
-	}
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	return x, nil
-}
-
-type Feed_ListVideosClient interface {
-	Recv() (*ListFeedResp, error)
-	grpc.ClientStream
-}
-
-type feedListVideosClient struct {
-	grpc.ClientStream
-}
-
-func (x *feedListVideosClient) Recv() (*ListFeedResp, error) {
-	m := new(ListFeedResp)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
+	return out, nil
 }
 
 func (c *feedClient) GetVideoById(ctx context.Context, in *QueryVideosReq, opts ...grpc.CallOption) (*Video, error) {
@@ -79,7 +56,7 @@ func (c *feedClient) GetVideoById(ctx context.Context, in *QueryVideosReq, opts 
 // All implementations must embed UnimplementedFeedServer
 // for forward compatibility
 type FeedServer interface {
-	ListVideos(*ListFeedReq, Feed_ListVideosServer) error
+	ListVideos(context.Context, *ListFeedReq) (*ListFeedResp, error)
 	GetVideoById(context.Context, *QueryVideosReq) (*Video, error)
 	mustEmbedUnimplementedFeedServer()
 }
@@ -88,8 +65,8 @@ type FeedServer interface {
 type UnimplementedFeedServer struct {
 }
 
-func (UnimplementedFeedServer) ListVideos(*ListFeedReq, Feed_ListVideosServer) error {
-	return status.Errorf(codes.Unimplemented, "method ListVideos not implemented")
+func (UnimplementedFeedServer) ListVideos(context.Context, *ListFeedReq) (*ListFeedResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListVideos not implemented")
 }
 func (UnimplementedFeedServer) GetVideoById(context.Context, *QueryVideosReq) (*Video, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetVideoById not implemented")
@@ -107,25 +84,22 @@ func RegisterFeedServer(s grpc.ServiceRegistrar, srv FeedServer) {
 	s.RegisterService(&Feed_ServiceDesc, srv)
 }
 
-func _Feed_ListVideos_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(ListFeedReq)
-	if err := stream.RecvMsg(m); err != nil {
-		return err
+func _Feed_ListVideos_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListFeedReq)
+	if err := dec(in); err != nil {
+		return nil, err
 	}
-	return srv.(FeedServer).ListVideos(m, &feedListVideosServer{stream})
-}
-
-type Feed_ListVideosServer interface {
-	Send(*ListFeedResp) error
-	grpc.ServerStream
-}
-
-type feedListVideosServer struct {
-	grpc.ServerStream
-}
-
-func (x *feedListVideosServer) Send(m *ListFeedResp) error {
-	return x.ServerStream.SendMsg(m)
+	if interceptor == nil {
+		return srv.(FeedServer).ListVideos(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/feed.Feed/ListVideos",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FeedServer).ListVideos(ctx, req.(*ListFeedReq))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _Feed_GetVideoById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -154,16 +128,14 @@ var Feed_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*FeedServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
+			MethodName: "ListVideos",
+			Handler:    _Feed_ListVideos_Handler,
+		},
+		{
 			MethodName: "GetVideoById",
 			Handler:    _Feed_GetVideoById_Handler,
 		},
 	},
-	Streams: []grpc.StreamDesc{
-		{
-			StreamName:    "ListVideos",
-			Handler:       _Feed_ListVideos_Handler,
-			ServerStreams: true,
-		},
-	},
+	Streams:  []grpc.StreamDesc{},
 	Metadata: "feed.proto",
 }

@@ -3,29 +3,20 @@ package rpc
 import (
 	"context"
 	"github.com/oigi/Magikarp/grpc/pb/favorite"
-	"github.com/pkg/errors"
 )
 
-func IsFavorite(ctx context.Context, req *favorite.IsFavoriteReq) (resp *favorite.IsFavoriteResp, err error) {
-	resp, err = FavoriteClient.IsFavorite(ctx, req)
-	if err != nil {
-		return nil, err
-	}
-	if resp.Code != 0 {
-		return nil, errors.New(resp.Msg)
-	}
+func FavoriteAction(ctx context.Context, req *favorite.FavoriteActionReq) (resp *favorite.FavoriteActionResp, err error) {
+	return FavoriteClient.FavoriteAction(ctx, req)
+}
 
-	return resp, nil
+func FavoriteList(ctx context.Context, req *favorite.FavoriteListReq) (resp *favorite.FavoriteListResp, err error) {
+	return FavoriteClient.FavoriteList(ctx, req)
 }
 
 func FavoriteCount(ctx context.Context, req *favorite.FavoriteCountReq) (resp *favorite.FavoriteCountResp, err error) {
-	resp, err = FavoriteClient.FavoriteCount(ctx, req)
-	if err != nil {
-		return nil, err
-	}
-	if resp.Code != 0 {
-		return nil, errors.New(resp.Msg)
-	}
+	return FavoriteClient.FavoriteCount(ctx, req)
+}
 
-	return resp, nil
+func IsFavorite(ctx context.Context, req *favorite.IsFavoriteReq) (resp *favorite.IsFavoriteResp, err error) {
+	return FavoriteClient.IsFavorite(ctx, req)
 }

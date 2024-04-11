@@ -3,18 +3,16 @@ package rpc
 import (
 	"context"
 	"github.com/oigi/Magikarp/grpc/pb/comment"
-	"github.com/pkg/errors"
 )
 
 func CommentCount(ctx context.Context, req *comment.CommentCountReq) (resp *comment.CommentCountResp, err error) {
-	resp, err = CommentClient.CommentCount(ctx, req)
-	if err != nil {
-		return nil, err
-	}
+	return CommentClient.CommentCount(ctx, req)
+}
 
-	if resp.Code != 0 {
-		return nil, errors.New(resp.Msg)
-	}
+func CommentAction(ctx context.Context, req *comment.CommentActionReq) (resp *comment.CommentActionResp, err error) {
+	return CommentClient.CommentAction(ctx, req)
+}
 
-	return resp, nil
+func CommentList(ctx context.Context, req *comment.CommentListReq) (resp *comment.CommentListResp, err error) {
+	return CommentClient.CommentList(ctx, req)
 }

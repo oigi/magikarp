@@ -13,7 +13,7 @@ import (
 	"strconv"
 )
 
-func PackFeedListResp(vidoes []feedModel.Videos, code int64, msg string, userID int64, stream feed.Feed_ListVideosServer) error {
+func PackFeedListResp(vidoes []feedModel.Videos, code int64, msg string, userID int64) (*feed.ListFeedResp, error) {
 	nextTime := "7777777777"
 
 	var VideoList []*feed.Video
@@ -29,7 +29,7 @@ func PackFeedListResp(vidoes []feedModel.Videos, code int64, msg string, userID 
 	})
 	if err != nil {
 		config.LOG.Error("rpc.IsFavorite error", zap.Error(err))
-		return nil
+		return nil, nil
 	}
 
 	isFavorite := isFavoriteResp.IsFavorite
@@ -39,7 +39,7 @@ func PackFeedListResp(vidoes []feedModel.Videos, code int64, msg string, userID 
 	})
 	if err != nil {
 		config.LOG.Error("rpc.FavoriteCount error", zap.Error(err))
-		return nil
+		return nil, nil
 	}
 	videoFavoriteCount := favoriteCount.VideoFavoriteCount
 
@@ -48,7 +48,7 @@ func PackFeedListResp(vidoes []feedModel.Videos, code int64, msg string, userID 
 	})
 	if err != nil {
 		config.LOG.Error("rpc.CommentCount error", zap.Error(err))
-		return nil
+		return nil, nil
 	}
 	videoCommentCount := commentCount.CommentCount
 
@@ -81,14 +81,13 @@ func PackFeedListResp(vidoes []feedModel.Videos, code int64, msg string, userID 
 	}
 
 	nextTimeInt, _ := strconv.Atoi(nextTime)
-	stream.Send(&feed.ListFeedResp{
+	resp := &feed.ListFeedResp{
 		Code:      code,
 		Msg:       msg,
 		VideoList: VideoList,
 		NextTime:  int64(nextTimeInt),
-	})
-
-	return nil
+	}
+	return resp, nil
 }
 
 func PackVideoInfoResp(v *feedModel.Videos) (*feed.Video, error) {

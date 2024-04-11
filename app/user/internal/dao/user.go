@@ -20,6 +20,7 @@ func NewUserDao(ctx context.Context) *UserDao {
 
 // GetUserInfoById 根据用户id获取用户信息
 func (db *UserDao) GetUserInfoById(req *user.GetUserByIdReq) (r *userModel.User, err error) {
+	r = &userModel.User{}
 	err = db.Model(&r).Where("id=?", req.UserId).First(&r).Error
 	if err != nil {
 		err = errors.Wrapf(err, "failed to get user info, id = %v", req.UserId)
@@ -30,6 +31,7 @@ func (db *UserDao) GetUserInfoById(req *user.GetUserByIdReq) (r *userModel.User,
 
 // GetUserInfo 获取用户信息
 func (db *UserDao) GetUserInfo(req *user.UserLoginReq) (r *userModel.User, err error) {
+	r = &userModel.User{}
 	err = db.Model(&r).Where("email=?", req.Email).First(&r).Error
 	if err != nil {
 		err = errors.Wrapf(err, "failed to get user info, email = %v", req.Email)

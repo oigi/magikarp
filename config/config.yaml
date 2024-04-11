@@ -6,8 +6,15 @@ mysql:
   username: root
   password: "123456"
 
+oss:
+  endpoint: ""
+  accessKey: ""
+  secret: ""
+  bucketName: ""
+  callback: ""
+
 jwt:
-  signing-key: "36468-sasdh-edasne"
+  signing-key: "12312-sasdh-edasne"
 
 redis:
   db: 0
@@ -113,13 +120,6 @@ etcd:
     feed:
       name: feed
 
-#  milvus:
-#    host: 127.0.0.1
-#    port: 19530
-#    vector_dimension: 768
-#    default_milvus_table_name: milvus_table_name
-#    metric_type: L2
-#    timeout: 3
 
   jaeger:
     addr: 127.0.0.1:4317

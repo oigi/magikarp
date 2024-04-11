@@ -37,6 +37,6 @@ message QueryVideosReq {
 }
 
 service Feed {
-  rpc ListVideos(ListFeedReq) returns (stream ListFeedResp);  // 流式 rpc
+  rpc ListVideos(ListFeedReq) returns (ListFeedResp);  //
   rpc GetVideoById (QueryVideosReq) returns (Video); // 根据视频id返回一个视频
 }

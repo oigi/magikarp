@@ -26,6 +26,7 @@ func GetUserServe() *UserServe {
 }
 
 func (u *UserServe) UserLogin(ctx context.Context, req *user.UserLoginReq) (resp *user.UserLoginResp, err error) {
+	resp = &user.UserLoginResp{}
 	client := dao.NewUserDao(ctx)
 	//defer mysql.CloseDB() TODO 处理数据库关闭
 	r, err := client.GetUserInfo(req)
@@ -43,6 +44,7 @@ func (u *UserServe) UserLogin(ctx context.Context, req *user.UserLoginReq) (resp
 	return
 }
 func (u *UserServe) UserRegister(ctx context.Context, req *user.UserRegisterReq) (resp *user.UserRegisterResp, err error) {
+	resp = &user.UserRegisterResp{}
 	resp.Code = e.SUCCESS
 	err = dao.NewUserDao(ctx).CreateUser(req)
 	if err != nil {

@@ -7,6 +7,8 @@ import (
 	"github.com/oigi/Magikarp/grpc/pb/comment"
 	"github.com/oigi/Magikarp/grpc/pb/favorite"
 	"github.com/oigi/Magikarp/grpc/pb/feed"
+	"github.com/oigi/Magikarp/grpc/pb/publish"
+	"github.com/oigi/Magikarp/grpc/pb/relation"
 	"github.com/oigi/Magikarp/grpc/pb/user"
 	"github.com/oigi/Magikarp/pkg/consts"
 	"github.com/oigi/Magikarp/pkg/discovery"
@@ -20,13 +22,16 @@ import (
 )
 
 var (
-	Register *discovery.Resolver
-	ctx      context.Context
+	Register   *discovery.Resolver
+	ctx        context.Context
+	CancelFunc context.CancelFunc
 
 	UserClient     user.UserServiceClient
 	FeedClient     feed.FeedClient
 	FavoriteClient favorite.FavoriteServiceClient
 	CommentClient  comment.CommentServiceClient
+	PublishClient  publish.PublishServiceClient
+	RelationClient relation.RelationServiceClient
 )
 
 // Init 初始化所有的rpc请求
@@ -38,8 +43,10 @@ func Init() {
 	defer Register.Close()
 	initClient(config.CONFIG.Etcd.Domain[consts.UserServiceName].Name, &UserClient)
 	initClient(config.CONFIG.Etcd.Domain[consts.FeedServiceName].Name, &FeedClient)
-	//initClient(config.CONFIG.Etcd.Domain[consts.FavoriteServiceName].Name, &FavoriteClient)
-	//initClient(config.CONFIG.Etcd.Domain[consts.CommentServiceName].Name, &CommentClient)
+	initClient(config.CONFIG.Etcd.Domain[consts.FavoriteServiceName].Name, &FavoriteClient)
+	initClient(config.CONFIG.Etcd.Domain[consts.CommentServiceName].Name, &CommentClient)
+	initClient(config.CONFIG.Etcd.Domain[consts.PublishServiceName].Name, &PublishClient)
+	initClient(config.CONFIG.Etcd.Domain[consts.RelationServiceName].Name, &RelationClient)
 }
 
 // initClient 初始化所有的rpc客户端
@@ -61,6 +68,11 @@ func initClient(serviceName string, client interface{}) {
 		*c = feed.NewFeedClient(conn)
 	case *comment.CommentServiceClient:
 		*c = comment.NewCommentServiceClient(conn)
+	case *publish.PublishServiceClient:
+		*c = publish.NewPublishServiceClient(conn)
+	case *relation.RelationServiceClient:
+		*c = relation.NewRelationServiceClient(conn)
+
 	default:
 		panic("unsupported worker type")
 	}
