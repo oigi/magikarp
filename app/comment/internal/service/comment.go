@@ -25,6 +25,7 @@ func GetCommentServe() *CommentServe {
 
 func (c *CommentServe) CommentAction(ctx context.Context, req *comment.CommentActionReq) (resp *comment.CommentActionResp, err error) {
 	// 判断发布评论或者删除评论
+	resp = &comment.CommentActionResp{}
 	switch req.ActionType {
 	case 1:
 		if err = dao.NewCommentDao(ctx).AddComment(req); err != nil {
@@ -42,14 +43,14 @@ func (c *CommentServe) CommentAction(ctx context.Context, req *comment.CommentAc
 			resp.StatusCode = e.SUCCESS
 			resp.StatusMsg = "删除评论成功"
 		}
-	default:
-		resp.StatusCode = e.InvalidParams
-		resp.StatusMsg = "无效参数"
 	}
+	resp.StatusCode = e.InvalidParams
+	resp.StatusMsg = "无效参数"
 	return
 }
 
 func (c *CommentServe) CommentCount(ctx context.Context, req *comment.CommentCountReq) (resp *comment.CommentCountResp, err error) {
+	resp = &comment.CommentCountResp{}
 	count, err := dao.NewCommentDao(ctx).GetCommentCount(req)
 	if err != nil {
 		resp.Code = e.ERROR
@@ -63,6 +64,7 @@ func (c *CommentServe) CommentCount(ctx context.Context, req *comment.CommentCou
 }
 
 func (c *CommentServe) CommentList(ctx context.Context, req *comment.CommentListReq) (resp *comment.CommentListResp, err error) {
+	resp = &comment.CommentListResp{}
 	list, err := dao.NewCommentDao(ctx).GetCommentList(req)
 	if err != nil {
 		resp.StatusCode = e.ERROR
