@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-type Videos struct {
+type Video struct {
 	model.Model
 	AuthorId      int64         `json:"author_id" gorm:"column:author_id;type:int(11) unsigned;comment:上传用户Id;NOT NULL"`
 	Title         string        `json:"title" gorm:"column:title;type:varchar(255);comment:视频标题;NOT NULL"`
@@ -19,4 +19,15 @@ type Videos struct {
 	Duration      time.Duration `json:"duration" gorm:"column:duration;type:varchar(255);comment:视频时长"`
 	Label         string        `json:"label" gorm:"column:label;type:varchar(255);comment:视频标签;NOT NULL"`
 	Open          bool          `json:"open" gorm:"column:open;default:'true';comment:是否公开"`
+}
+
+type VideoInMongo struct {
+	ID        int64  `bson:"id"`
+	UserID    int64  `bson:"user_id"`
+	Title     string `bson:"title"`
+	PlayURL   string `bson:"play_url"`
+	CoverURL  string `bson:"cover_url"`
+	Label     string `bson:"label"`
+	Category  string `bson:"category"`
+	Timestamp string `bson:"timestamp"`
 }

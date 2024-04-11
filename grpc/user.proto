@@ -46,10 +46,10 @@ message GetUserByIdResp {
   User user = 3;
 }
 
-message FollowUserReq {
-  int64 user_id = 1;
-  int64 to_user_id = 2;
-}
+//message FollowUserReq {
+//  int64 user_id = 1;
+//  int64 to_user_id = 2;
+//}
 
 service UserService {
   rpc UserLogin(UserLoginReq) returns (UserLoginResp);

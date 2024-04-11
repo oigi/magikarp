@@ -7,7 +7,6 @@ message CreateVideoRequest {
   int64 actor_id = 1; // 用户id
   bytes data = 2; // 视频数据
   string title = 3; // 视频标题
-  string coverUrl = 4; // 视频封面
   string category = 5; // 视频分类
   string label = 6; //视频标签
 }
@@ -27,7 +26,17 @@ message ListVideoResponse{
   repeated feed.Video video_list = 3; // 视频列表
 }
 
+message DeleteVideoReq{
+  int64 video_id = 1; // 视频id
+}
+
+message DeleteVideoResp{
+  int64 code = 1; // 状态码，0-成功，其他值-失败
+  string msg = 2; // 返回状态描述
+}
+
 service PublishService {
   rpc CreateVideo(CreateVideoRequest) returns (CreateVideoResponse) {}
   rpc ListVideo(ListVideoRequest) returns (ListVideoResponse) {}
+  rpc DeleteVideo(DeleteVideoReq) returns (DeleteVideoResp) {}
 }

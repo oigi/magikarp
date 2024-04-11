@@ -5,6 +5,8 @@
 .idea/
 logs/
 default.etcd/
+pkg/oss/oss.yaml
+
 *.exe
 *.exe~
 *.dll

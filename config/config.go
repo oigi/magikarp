@@ -11,8 +11,9 @@ type Config struct {
 	System  *model.System  `mapstructure:"system" json:"system" yaml:"system"`
 	Etcd    *model.Etcd    `mapstructure:"etcd" json:"etcd" yaml:"etcd"`
 	Kafka   *model.Kafka   `mapstructure:"kafka" json:"kafka" yaml:"kafka"`
+	Oss     *model.Oss     `mapstructure:"oss" json:"oss" yaml:"oss"`
+	Email   *model.Email   `mapstructure:"email" json:"email" yaml:"email"`
 
-	// gorm
 	Mongo *model.Mongo `mapstructure:"mongo" json:"mongo" yaml:"mongo"`
 	Mysql *model.Mysql `mapstructure:"mysql" json:"mysql" yaml:"mysql"`
 	Redis *model.Redis `mapstructure:"redis" json:"redis" yaml:"redis"`

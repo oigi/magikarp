@@ -3,12 +3,10 @@ package service
 import (
 	"context"
 	"github.com/oigi/Magikarp/app/publish/internal/dao"
-	publishModel "github.com/oigi/Magikarp/app/publish/internal/model"
-	"github.com/oigi/Magikarp/grpc/pb/feed"
+	"github.com/oigi/Magikarp/app/publish/internal/util"
 	"github.com/oigi/Magikarp/grpc/pb/publish"
 	"github.com/oigi/Magikarp/pkg/consts/e"
 	"sync"
-	"time"
 )
 
 var PublishServeOnce sync.Once
@@ -25,66 +23,40 @@ func GetPublishServe() *PublishServe {
 	return PublishServeIns
 }
 
-func (p *PublishServe) CreateVideo(ctx context.Context, req *publish.CreateVideoRequest) (resp *publish.CreateVideoResponse, err error) {
-	resp.Code = e.SUCCESS
-	client := dao.NewPublishDao(ctx)
-	err = client.InsertVideo(req)
+func (p *PublishServe) CreateVideo(ctx context.Context, req *publish.CreateVideoRequest) (*publish.CreateVideoResponse, error) {
+	resp := &publish.CreateVideoResponse{}
+	if ok, msg := util.Check(req); !ok {
+		resp.Code = e.ERROR
+		resp.Msg = msg
+		return resp, nil
+	}
+	err := SavePublish(ctx, req)
 	if err != nil {
 		resp.Code = e.ERROR
 		resp.Msg = "创建视频失败"
-		return
+		return resp, err
 	}
-	resp.Code = 200
+	resp.Code = e.SUCCESS
 	resp.Msg = "创建视频成功"
-	return
+	return resp, nil
 }
-func (p *PublishServe) ListVideo(ctx context.Context, req *publish.ListVideoRequest) (resp *publish.ListVideoResponse, err error) {
-	find, err := dao.NewPublishDao(ctx).FindVideoListByUserId(req)
+
+func (p *PublishServe) ListVideo(ctx context.Context, req *publish.ListVideoRequest) (*publish.ListVideoResponse, error) {
+	resp := &publish.ListVideoResponse{}
+
+	list, err := dao.NewMongoClient(ctx).QueryPublishList(req.UserId)
 	if err != nil {
 		resp.Code = e.ERROR
-		resp.Msg = "查询用户视频失败"
-		return
+		resp.Msg = "获取视频列表失败"
+		return resp, err
 	}
-	videos := queryDetailed(find)
-	resp.VideoList = videos
+
 	resp.Code = e.SUCCESS
-	resp.Msg = "查询视频成功"
-	return
+	resp.Msg = "获取视频列表成功"
+	resp.VideoList = list
+	return resp, nil
 }
 
-//func (p *PublishServe) CountVideo(ctx context.Context, req *publish.CountVideoRequest) (resp *publish.CountVideoResponse, err error) {
+//func (p *PublishServe) DeleteVideo(ctx context.Context, req *publish.DeleteVideoReq) (*publish.DeleteVideoResp, error) {
 //
 //}
-
-func queryDetailed(videos []publishModel.Videos) (respVideoList []*feed.Video) {
-	var wg sync.WaitGroup
-	videoChan := make(chan *feed.Video, len(videos))
-
-	for _, v := range videos {
-		wg.Add(1)
-		go func(v publishModel.Videos) {
-			defer wg.Done()
-			videoChan <- &feed.Video{
-				Id:            v.ID,
-				Uid:           v.AuthorId,
-				PlayUrl:       v.PlayUrl,
-				CoverUrl:      v.CoverUrl,
-				FavoriteCount: v.FavoriteCount,
-				CommentCount:  v.CommentCount,
-				Title:         v.Title,
-				CreateTime:    v.CreatedAt.Format(time.RFC3339), // 格式化时间
-				StarCount:     v.StarCount,
-				Duration:      v.Duration.String(), // Duration转换为字符串
-				PlayCount:     v.PlayCount,
-			}
-		}(v)
-	}
-	wg.Wait()
-	close(videoChan)
-
-	for video := range videoChan {
-		respVideoList = append(respVideoList, video)
-	}
-
-	return respVideoList
-}
