@@ -53,13 +53,13 @@ func (c *CommentServe) CommentCount(ctx context.Context, req *comment.CommentCou
 	resp = &comment.CommentCountResp{}
 	count, err := dao.NewCommentDao(ctx).GetCommentCount(req)
 	if err != nil {
-		resp.Code = e.ERROR
-		resp.Msg = "获取评论数量失败"
+		resp.StatusCode = e.ERROR
+		resp.StatusMsg = "获取评论数量失败"
 		return
 	}
 	resp.CommentCount = count.CommentCount
-	resp.Code = e.SUCCESS
-	resp.Msg = "获取评论数量成功"
+	resp.StatusCode = e.SUCCESS
+	resp.StatusMsg = "获取评论数量成功"
 	return
 }
 

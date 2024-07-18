@@ -11,8 +11,8 @@ message FavoriteActionReq  {
 }
 
 message FavoriteActionResp  {
-    int32 code = 1;
-    string msg = 2;
+    int32 status_code = 1;
+    string status_msg = 2;
 }
 
 message FavoriteListReq  {
@@ -20,8 +20,8 @@ message FavoriteListReq  {
 }
 
 message FavoriteListResp  {
-    int32 code = 1;
-    string msg = 2;
+    int32 status_code = 1;
+    string status_msg = 2;
     repeated feed.Video video_list = 3;
 }
 
@@ -30,8 +30,8 @@ message FavoriteCountReq  {
 }
 
 message FavoriteCountResp  {
-    int32 code = 1;
-    string msg = 2;
+    int32 status_code = 1;
+    string status_msg = 2;
     map<int64, int64> video_favorite_count = 3;
 }
 
@@ -41,8 +41,8 @@ message IsFavoriteReq {
 }
 
 message IsFavoriteResp {
-    int32 code = 1;
-    string msg = 2;
+    int32 status_code = 1;
+    string status_msg = 2;
     map<int64, bool> is_favorite = 3; // 视频ID到是否点赞的映射
 }
 

@@ -97,8 +97,7 @@ func convertUserModel(userModel *CommentModel.User) *user.User {
 		return nil
 	}
 	return &user.User{
-		Id:     userModel.ID,
-		Name:   userModel.NickName,
-		Avatar: userModel.Avatar,
+		Id:   userModel.ID,
+		Name: userModel.NickName,
 	}
 }

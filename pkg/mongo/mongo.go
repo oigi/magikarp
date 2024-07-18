@@ -37,23 +37,6 @@ func mgClient() error {
 		return err
 	}
 
-	/*	coll := mongoClient.Database(m.Database).Collection(m.Collection)
-		title := m.Title
-
-		var result bson.M
-		err = coll.FindOne(ctx, bson.D{{"title", title}}).Decode(&result)
-		if errors.Is(err, mongo.ErrNoDocuments) {
-			config.LOG.Info("No document was found with the title", zap.String("title", title))
-			return nil
-		}
-		if err != nil {
-			return err
-		}
-		jsonData, err := json.MarshalIndent(result, "", "    ")
-		if err != nil {
-			return err
-		}
-		fmt.Printf("%s\n", jsonData)*/
 	return nil
 }
 

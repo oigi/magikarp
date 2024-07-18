@@ -6,8 +6,8 @@ import (
 	"github.com/oigi/Magikarp/app/gateway/rpc"
 	"github.com/oigi/Magikarp/config"
 	"github.com/oigi/Magikarp/grpc/pb/user"
+	"github.com/oigi/Magikarp/pkg/consts/e"
 	"github.com/oigi/Magikarp/pkg/jwt"
-	"github.com/oigi/Magikarp/pkg/resp"
 	"go.uber.org/zap"
 	"net/http"
 )
@@ -15,17 +15,34 @@ import (
 // UserRegister 用户注册
 func UserRegister(ctx *gin.Context) {
 	var req user.UserRegisterReq
-	err := ctx.ShouldBind(&req)
+	var json model.Login
+	// 从查询参数中获取用户名和密码
+	err := ctx.ShouldBindQuery(&json)
 	if err != nil {
-		config.LOG.Error("绑定参数错误: ", zap.Error(err))
-		ctx.JSON(http.StatusOK, resp.RespError(ctx, err, "绑定参数错误"))
-		return
+		resp := model.CommonResp{
+			StatusCode: e.ERROR,
+			StatusMsg:  "ShouldBind绑定错误",
+		}
+		ctx.JSON(http.StatusOK, resp)
 	}
+	req.Email = json.Username
+	req.Password = json.Password
+
 	register, err := rpc.UserRegister(ctx, &req)
 	if err != nil {
 		config.LOG.Error("UserRegister RPC服务调用错误")
-		ctx.JSON(http.StatusOK, resp.RespError(ctx, err, "UserRegister RPC服务调用错误"))
-		return
+		ctx.JSON(http.StatusOK, register)
+	}
+
+	if register.StatusCode == e.SUCCESS {
+		Token, err := jwt.GenerateJWT(register.UserId, req.Email)
+		if err != nil {
+			config.LOG.Error("加密错误:", zap.Error(err))
+			register.StatusMsg = "加密错误"
+			ctx.JSON(http.StatusOK, register)
+		}
+		register.StatusCode = e.DOUYINSUCCESS
+		register.Token = Token
 	}
 
 	ctx.JSON(http.StatusOK, register)
@@ -34,29 +51,46 @@ func UserRegister(ctx *gin.Context) {
 // UserLogin 用户登录
 func UserLogin(ctx *gin.Context) {
 	var req user.UserLoginReq
-	err := ctx.ShouldBind(&req)
+	var json model.Login
+	err := ctx.ShouldBindQuery(&json)
 	if err != nil {
-		config.LOG.Error("绑定参数错误", zap.Error(err))
-		ctx.JSON(http.StatusOK, resp.RespError(ctx, err, "绑定参数错误"))
-		return
+		resp := model.CommonResp{
+			StatusCode: e.ERROR,
+			StatusMsg:  "ShouldBind绑定错误",
+		}
+		ctx.JSON(http.StatusOK, resp)
 	}
+	req.Email = json.Username
+	req.Password = json.Password
+
 	login, err := rpc.UserLogin(ctx, &req)
 	if err != nil {
 		config.LOG.Error("UserUserLogin RPC服务调用错误")
-		ctx.JSON(http.StatusOK, resp.RespError(ctx, err, "UserUserLogin RPC服务调用错误"))
-		return
+		ctx.JSON(http.StatusOK, login)
 	}
-	accessToken, refreshToken, err := jwt.GenerateJWT(login.User.Id, login.User.Email)
+	if login.StatusCode == e.SUCCESS {
+		Token, err := jwt.GenerateJWT(login.UserId, req.Email)
+		if err != nil {
+			config.LOG.Error("加密错误:", zap.Error(err))
+			login.StatusMsg = "加密错误"
+			ctx.JSON(http.StatusOK, login)
+		}
+		login.StatusCode = e.DOUYINSUCCESS
+		login.Token = Token
+	}
+	ctx.JSON(http.StatusOK, login)
+}
+
+func GetUserInfo(ctx *gin.Context) {
+	var req user.GetUserByIdReq
+	//token := ctx.Query("token")
+	id := ctx.GetInt64("id")
+	req.UserId = id
+	resp, err := rpc.GetUserById(ctx, &req)
 	if err != nil {
-		config.LOG.Error("加密错误:", zap.Error(err))
-		ctx.JSON(http.StatusOK, resp.RespError(ctx, err, "加密错误"))
-		return
+		config.LOG.Error("RPC GetUserById 调用错误", zap.Error(err))
+		ctx.JSON(http.StatusOK, resp)
 	}
-	u := &model.TokenData{
-		ID:           login.User.Id,
-		Email:        login.User.Email,
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
-	}
-	ctx.JSON(http.StatusOK, resp.RespSuccess(ctx, u))
+	resp.StatusCode = e.DOUYINSUCCESS
+	ctx.JSON(http.StatusOK, resp)
 }

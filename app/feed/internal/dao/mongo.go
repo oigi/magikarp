@@ -6,6 +6,7 @@ import (
 	"github.com/oigi/Magikarp/app/feed/internal/consts"
 	feedModel "github.com/oigi/Magikarp/app/feed/internal/model"
 	"github.com/oigi/Magikarp/app/feed/internal/util"
+	"github.com/oigi/Magikarp/config/model"
 	mongodb "github.com/oigi/Magikarp/pkg/mongo"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -43,34 +44,45 @@ func (m *MongoFeedDao) GetVideoByUserIdInMongo(UserID int) (*feedModel.Videos, e
 }
 
 // FindFeedInMongo 在 MongoDB 中搜索 start_time < time <= end_time 的视频
-func (m *MongoFeedDao) FindFeedInMongo(startTime string, endTime string) ([]feedModel.Videos, error) {
-	// 将字符串类型的时间转换为整数
-	startTimeInt, _ := strconv.Atoi(startTime)
-	endTimeInt, _ := strconv.Atoi(endTime)
-
+func (m *MongoFeedDao) FindFeedInMongo(startTime int64, endTime int64) ([]feedModel.Videos, error) {
 	// 构建过滤条件
 	filter := bson.D{
-		{"time", bson.D{
-			{"$gt", startTimeInt}, // 大于开始时间
-			{"$lte", endTimeInt},  // 小于等于结束时间
-		}},
+		{"$and",
+			bson.A{
+				bson.D{{"timestamp", bson.D{{"$gt", startTime}}}},
+				bson.D{{"timestamp", bson.D{{"$lte", endTime}}}},
+			},
+		},
 	}
 
 	// 在 MongoDB 中搜索符合条件的视频列表
-	cursor, err := m.Database(consts.MongoDatabaseName).Collection(consts.MongoCollection).Find(m.Context, filter)
+	collection := m.Database(consts.MongoDatabaseName).Collection(consts.MongoCollection)
+	cursor, err := collection.Find(m.Context, filter)
 	if err != nil {
 		return nil, err
 	}
-	defer cursor.Close(m.Context)
+	defer cursor.Close(context.Background())
 
 	// 遍历结果集，并将结果映射到 feedModel.Videos 结构体列表中
 	var videos []feedModel.Videos
-	for cursor.Next(m.Context) {
-		var video feedModel.Videos
+	for cursor.Next(context.Background()) {
+		var video feedModel.VideoInMongo
 		if err := cursor.Decode(&video); err != nil {
 			continue
 		}
-		videos = append(videos, video)
+		videomo := feedModel.Videos{
+			Model: model.Model{
+				ID: video.ID,
+			},
+			AuthorId:  video.UserID,
+			Title:     video.Title,
+			CoverUrl:  video.CoverURL,
+			PlayUrl:   video.PlayURL,
+			Category:  video.Category,
+			Label:     video.Label,
+			Timestamp: strconv.FormatInt(video.Timestamp, 10),
+		}
+		videos = append(videos, videomo)
 	}
 	if err := cursor.Err(); err != nil {
 		return nil, err
@@ -84,8 +96,9 @@ func (m *MongoFeedDao) SearchFeedEarlierInMongo(latestTime int64, stopTime int64
 	var videoList []feedModel.Videos
 
 	nextTime := latestTime - 86400
+
 	for {
-		videos, err := m.FindFeedInMongo(fmt.Sprint(nextTime), fmt.Sprint(latestTime))
+		videos, err := m.FindFeedInMongo(nextTime, latestTime)
 		if err != nil {
 			return videoList, err
 		}
@@ -114,7 +127,7 @@ func (m *MongoFeedDao) SearchFeedLaterInMongo(markedTime string, currentTime str
 
 	var videoList []feedModel.Videos
 	for {
-		videos, err := m.FindFeedInMongo(fmt.Sprint(markedTimeInt), fmt.Sprint(nextMarkedTimeInt))
+		videos, err := m.FindFeedInMongo(int64(markedTimeInt), nextMarkedTimeInt)
 		if err != nil {
 			return videoList, markedTime, err
 		}

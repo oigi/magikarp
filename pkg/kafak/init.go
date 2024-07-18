@@ -7,6 +7,7 @@ import (
 
 var GlobalKafka sarama.Client
 
+// InitKafka TODO 配置Kafka
 func InitKafka() {
 	con := sarama.NewConfig()
 	con.Producer.Return.Successes = true

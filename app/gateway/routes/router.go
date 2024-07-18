@@ -9,37 +9,54 @@ import (
 func NewRouter() *gin.Engine {
 	r := gin.Default()
 	r.Use(middleware.Cors(), middleware.ErrorMiddleware())
-	user := r.Group("/user")
+	douyin := r.Group("/douyin")
 	{
-		user.POST("/login", http.UserLogin)
-		user.POST("/register", http.UserRegister)
-	}
-	feed := r.Group("/feed")
-	{
-		feed.POST("", http.ListFeed)
-	}
-	comment := r.Group("/comment").Use(middleware.JWTAuthMiddleware())
-	{
-		comment.POST("", http.CommentAction)
-		comment.GET("count", http.CommentCount)
-		comment.GET("list", http.CommentList)
-	}
-	favorite := r.Group("/favorite").Use(middleware.JWTAuthMiddleware())
-	{
-		favorite.POST("", http.FavoriteAction)
-		favorite.GET("count", http.FavoriteCount)
-	}
-	publish := r.Group("/publish").Use(middleware.JWTAuthMiddleware())
-	{
-		publish.POST("", http.CreateVideo)
-		publish.GET("list", http.ListVideo)
-	}
-	relation := r.Group("/relation").Use(middleware.JWTAuthMiddleware())
-	{
-		relation.POST("", http.RelationAction)
-		relation.GET("follow", http.RelationFollowList)
-		relation.GET("follower", http.RelationFollowerList)
-		relation.GET("friend", http.RelationFriendList)
+		user := douyin.Group("/user")
+		{
+			user.POST("/login/", http.UserLogin)
+			user.POST("/register/", http.UserRegister)
+		}
+		getUser := douyin.Group("/user").Use(middleware.JWTAuthMiddleware())
+		{
+			getUser.GET("/", http.GetUserInfo)
+		}
+		feed := douyin.Group("/feed")
+		{
+			feed.GET("/", http.ListFeed)
+		}
+		comment := douyin.Group("/comment").Use(middleware.JWTAuthMiddleware())
+		{
+			comment.POST("action/", http.CommentAction)
+			comment.GET("count/", http.CommentCount)
+			comment.GET("list/", http.CommentList)
+		}
+
+		favorite := douyin.Group("/favorite").Use(middleware.JWTAuthMiddleware())
+		{
+			favorite.POST("action/", http.FavoriteAction)
+			favorite.GET("list/", http.FavoriteList)
+			favorite.GET("is/", http.IsFavorite)
+		}
+		favcount := douyin.Group("/favorite")
+		{
+			favcount.GET("/count/", http.FavoriteCount)
+		}
+		publish := douyin.Group("/publish").Use(middleware.JWTAuthMiddleware())
+		{
+			publish.GET("list/", http.ListVideo)
+		}
+		publishs := douyin.Group("/publish")
+		{
+			publishs.POST("action/", http.CreateVideo)
+		}
+		relation := douyin.Group("/relation").Use(middleware.JWTAuthMiddleware())
+		{
+			relation.POST("action/", http.RelationAction)
+			relation.GET("follow/", http.RelationFollowList)
+			relation.GET("follower/", http.RelationFollowerList)
+			relation.GET("friend/", http.RelationFriendList)
+		}
+
 	}
 
 	return r

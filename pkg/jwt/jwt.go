@@ -6,9 +6,7 @@ import (
 	"time"
 )
 
-//var jwtSecret = config.CONFIG.JWT.SigningKey
-
-var jwtSecret = "36468-sasdh-edasns"
+var jwtSecret = []byte("36468-sasdh-edasns")
 
 type Claims struct {
 	ID    int64  `json:"id"`
@@ -17,10 +15,9 @@ type Claims struct {
 }
 
 // GenerateJWT 生成JWT
-func GenerateJWT(id int64, email string) (accessToken, refreshToken string, err error) {
+func GenerateJWT(id int64, email string) (accessToken string, err error) {
 	now := time.Now()
 	expireTime := now.Add(24 * time.Hour)
-	rtExpireTime := now.Add(10 * 24 * time.Hour)
 
 	// Access Token
 	accessTokenClaims := Claims{
@@ -33,24 +30,10 @@ func GenerateJWT(id int64, email string) (accessToken, refreshToken string, err 
 	}
 	accessToken, err = jwt.NewWithClaims(jwt.SigningMethodHS256, accessTokenClaims).SignedString(jwtSecret)
 	if err != nil {
-		return "", "", errors.Wrap(err, "failed to get accessToken")
+		return "", errors.Wrap(err, "failed to get accessToken")
 	}
 
-	// Refresh Token
-	refreshTokenClaims := Claims{
-		id,
-		email,
-		jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(rtExpireTime), // 过期时间
-			Issuer:    "your_issuer_here",               // 签名的发行者 TODO
-		},
-	}
-	refreshToken, err = jwt.NewWithClaims(jwt.SigningMethodHS256, refreshTokenClaims).SignedString(jwtSecret)
-	if err != nil {
-		return "", "", errors.Wrap(err, "failed to get refreshToken")
-	}
-
-	return accessToken, refreshToken, nil
+	return accessToken, nil
 }
 
 // ParseToken 解析JWT
@@ -63,34 +46,12 @@ func ParseToken(token string) (*Claims, error) {
 	}
 
 	if claims, ok := tokenClaims.Claims.(*Claims); ok && tokenClaims.Valid {
+		// 检查 JWT 是否过期
+		if claims.ExpiresAt.Unix() < time.Now().Unix() {
+			return nil, errors.New("token has expired")
+		}
 		return claims, nil
 	}
 
 	return nil, errors.New("invalid token")
-}
-
-// ParseRefreshToken 验证用户token
-func ParseRefreshToken(aToken, rToken string) (newAToken, newRToken string, err error) {
-	accessClaim, err := ParseToken(aToken)
-	if err != nil {
-		return "", "", errors.Wrap(err, "failed to parse accessToken")
-	}
-
-	refreshClaim, err := ParseToken(rToken)
-	if err != nil {
-		return "", "", errors.Wrap(err, "failed to parse refreshToken")
-	}
-
-	if accessClaim.ExpiresAt.Unix() > time.Now().Unix() {
-		// 如果 access_token 没过期,每一次请求都刷新 refresh_token 和 access_token
-		return GenerateJWT(accessClaim.ID, accessClaim.Email)
-	}
-
-	if refreshClaim.ExpiresAt.Unix() > time.Now().Unix() {
-		// 如果 access_token 过期了,但是 refresh_token 没过期, 刷新 refresh_token 和 access_token
-		return GenerateJWT(accessClaim.ID, accessClaim.Email)
-	}
-
-	// 如果两者都过期了,重新登陆
-	return "", "", errors.New("身份过期，重新登陆")
 }

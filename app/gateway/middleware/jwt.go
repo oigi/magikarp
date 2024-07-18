@@ -1,37 +1,60 @@
 package middleware
 
 import (
-    "github.com/gin-gonic/gin"
-    "github.com/oigi/Magikarp/pkg/jwt"
-    "github.com/oigi/Magikarp/pkg/resp"
-    "net/http"
+	"fmt"
+	"github.com/gin-gonic/gin"
+	"github.com/oigi/Magikarp/app/gateway/model"
+	"github.com/oigi/Magikarp/config"
+	"github.com/oigi/Magikarp/pkg/consts/e"
+	"github.com/oigi/Magikarp/pkg/jwt"
+	"go.uber.org/zap"
+	"net/http"
 )
 
 func JWTAuthMiddleware() gin.HandlerFunc {
-    return func(ctx *gin.Context) {
-        // 客户端携带Token有三种方式 1.放在请求头 2.放在请求体 3.放在URI
-        // 这里假设Token放在Header的Authorization中，并使用Bearer开头
-        // 这里的具体实现方式要依据你的实际业务情况决定
-        authHeader := ctx.Request.Header.Get("Authorization")
-        if authHeader == "" {
-            ctx.JSON(http.StatusOK, gin.H{
-                "code": 2003,
-                "msg":  "请求头中auth为空",
-            })
-            ctx.Abort()
-            return
-        }
+	return func(ctx *gin.Context) {
+		// 客户端携带Token有三种方式 1.放在请求头 2.放在请求体 3.放在URI
+		// 这里假设Token放在Header的Authorization中，并使用Bearer开头
+		// 这里的具体实现方式要依据你的实际业务情况决定
+		//authHeader := ctx.Request.Header.Get("Authorization")
+		authHeader := ctx.Query("token")
+		//if authHeader == "" {
+		//	authHeader = ctx.GetHeader("token") // 请求头获取
+		//}
+		//if authHeader == "" {
+		//	authHeader = ctx.PostForm("token")
+		//}
+		//  请求体读取在各自方法里写
+		if authHeader == "" {
+			if authHeader == "" {
+				resp := model.CommonResp{
+					StatusCode: e.ErrorAuthNotFound,
+					StatusMsg:  "未登录,token不存在",
+				}
+				ctx.JSON(http.StatusOK, resp)
+				ctx.Abort()
+				return
+			}
+		}
 
-        // 解析 token
-        claims, err := jwt.ParseToken(authHeader)
-        if err != nil {
-            ctx.JSON(http.StatusUnauthorized, resp.RespError(ctx, err, "未授权"))
-            ctx.Abort()
-            return
-        }
+		fmt.Println("-----------------------------")
+		fmt.Println(authHeader)
 
-        // 将当前请求的userID信息保存到请求的上下文c上
-        ctx.Set("claims", claims)
-        ctx.Next()
-    }
+		// 解析 token
+		claims, err := jwt.ParseToken(authHeader)
+		if err != nil {
+			config.LOG.Error("解析错误", zap.Error(err))
+			resp := model.CommonResp{
+				StatusCode: e.ERROR,
+				StatusMsg:  "解析错误",
+			}
+			ctx.JSON(http.StatusUnauthorized, resp)
+			ctx.Abort()
+			return
+		}
+
+		// 将当前请求的userID信息保存到请求的上下文c上
+		ctx.Set("id", claims.ID)
+		ctx.Next()
+	}
 }

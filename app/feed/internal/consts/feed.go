@@ -1,9 +1,9 @@
 package consts
 
 const (
-	FeedList = "feedList"
+	FeedList = "feedlist"
 
 	MongoDatabaseName = "default"
 	MongoCollection   = "feed"
-	MongoMarkedTime   = "feedMarkedTime"
+	MongoMarkedTime   = "feedmarkedtime"
 )

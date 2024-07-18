@@ -10,6 +10,10 @@ func (c *ClientRedis) Set(ctx context.Context, key string, value string, expire 
 	return c.Client.Set(ctx, key, value, expire).Err()
 }
 
+func (c *ClientRedis) HSet(ctx context.Context, key string, value string, status string) error {
+	return c.Client.HSet(ctx, key, value, status).Err()
+}
+
 func (c *ClientRedis) SetObj(ctx context.Context, key string, value any, expire time.Duration) error {
 	valueJson, err := json.Marshal(value)
 

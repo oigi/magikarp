@@ -39,15 +39,20 @@ func (f *FavoriteDao) QueryFavoriteCount(req *favorite.FavoriteCountReq) (resp *
 // UpdateFavoriteCount 定时更新
 func (f *FavoriteDao) UpdateFavoriteCount(req *favorite.FavoriteCountReq) (resp map[int64]int64, err error) {
 	resp = make(map[int64]int64)
-	var favoriteModel favoriteModel.Favorite
-	counts, err := QueryFavoriteCount(req.VideoIdList)
+	//var favoriteModel favoriteModel.Videos
+	redis := NewRedisClient(context.Background())
+	counts, err := redis.QueryFavoriteCount(req.VideoIdList)
 	if err != nil {
 		return nil, err
 	}
+	if counts == nil {
+		return nil, nil
+	}
 	for videoID, count := range counts {
-		if err := f.Model(&favoriteModel).Where("video_id = ?", videoID).Update("favorite_count", count).Error; err != nil {
-			return nil, err
-		}
+		//if err := f.Model(&favoriteModel).Where("id = ?", videoID).Update("favorite_count", count).Error; err != nil {
+		//	return nil, err
+		//}
+		counts[videoID] = count + 100 //TODO 待修改
 	}
 	return counts, nil
 }

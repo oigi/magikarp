@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 	feedModel "github.com/oigi/Magikarp/app/feed/internal/model"
-	"github.com/oigi/Magikarp/app/gateway/rpc"
+	"github.com/oigi/Magikarp/app/feed/internal/rpc"
 	"github.com/oigi/Magikarp/config"
 	"github.com/oigi/Magikarp/grpc/pb/comment"
 	"github.com/oigi/Magikarp/grpc/pb/favorite"
@@ -13,8 +13,8 @@ import (
 	"strconv"
 )
 
-func PackFeedListResp(vidoes []feedModel.Videos, code int64, msg string, userID int64) (*feed.ListFeedResp, error) {
-	nextTime := "7777777777"
+func PackFeedListResp(ctx context.Context, vidoes []feedModel.Videos, code int64, msg string, userID int64) (*feed.ListFeedResp, error) {
+	nextTime := "9777777777"
 
 	var VideoList []*feed.Video
 	var VideoIdList []int64
@@ -51,7 +51,6 @@ func PackFeedListResp(vidoes []feedModel.Videos, code int64, msg string, userID 
 		return nil, nil
 	}
 	videoCommentCount := commentCount.CommentCount
-
 	for _, v := range vidoes {
 		temp := &feed.Video{
 			Id:            v.ID,
@@ -66,7 +65,7 @@ func PackFeedListResp(vidoes []feedModel.Videos, code int64, msg string, userID 
 			//PlayCount:    TODO 加入播放统计
 
 		}
-		resp, err := rpc.GetUserById(context.Background(), &user.GetUserByIdReq{
+		resp, err := rpc.GetUserById(ctx, &user.GetUserByIdReq{
 			UserId: v.AuthorId,
 		})
 		if err != nil {

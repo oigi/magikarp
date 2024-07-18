@@ -39,8 +39,8 @@ message CommentCountReq {
 }
 
 message CommentCountResp {
-  int32 code = 1;
-  string msg = 2;
+  int32 status_code = 1;
+  string status_msg = 2;
   map<int64, int64> comment_count = 3; // 视频id和评论数
 }
 

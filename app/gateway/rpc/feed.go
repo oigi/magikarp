@@ -23,7 +23,7 @@ func ListFeed(ctx context.Context, req *feed.ListFeedReq) (resp *feed.ListFeedRe
 	if r.Code != e.SUCCESS {
 		err = errors.Wrap(errors.New("获取视频流失败"), "r.Code is unsuccessful")
 		config.LOG.Error("", zap.Error(err))
-		return
+		return r, nil
 	}
 	return r, err
 }

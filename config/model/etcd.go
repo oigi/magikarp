@@ -3,7 +3,7 @@ package model
 type Etcd struct {
 	Address  string              `mapstructure:"address"json:"address"yaml:"address"`
 	Services map[string]*Service `mapstructure:"services" json:"services" yaml:"services"`
-	Server   *Server             `mapstructure:"server" json:"server" yaml:"server""`
+	Server   *Server             `mapstructure:"server" json:"server" yaml:"server"`
 	Jaeger   *Jaeger             `yaml:"jaeger"`
 	Domain   map[string]*Domain  `yaml:"domain"`
 }

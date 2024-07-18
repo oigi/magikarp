@@ -31,43 +31,58 @@ func (u *UserServe) UserLogin(ctx context.Context, req *user.UserLoginReq) (resp
 	//defer mysql.CloseDB() TODO 处理数据库关闭
 	r, err := client.GetUserInfo(req)
 	if err != nil {
-		resp.Code = e.ERROR
-		config.LOG.Error("getUserInfo error", zap.Error(err))
+		// 处理数据库查询错误
+		config.LOG.Error("数据库查询错误", zap.Error(err))
 		return
 	}
-	userResp := queryDetailed(r)
-	resp = &user.UserLoginResp{
-		User: userResp,
-		Code: e.SUCCESS,
-		Msg:  "登陆成功",
+
+	if r == nil {
+		// 处理找不到用户信息的情况
+		config.LOG.Error("找不到用户信息")
+		resp.UserId = 0
+		resp.StatusCode = e.ERROR
+		resp.StatusMsg = "找不到用户信息"
+		return
 	}
+
+	// 处理正常情况
+	userResp := &user.User{
+		Id: r.ID,
+	}
+	resp.UserId = userResp.Id
+	resp.StatusCode = e.SUCCESS
+	resp.StatusMsg = "登录成功"
 	return
 }
+
 func (u *UserServe) UserRegister(ctx context.Context, req *user.UserRegisterReq) (resp *user.UserRegisterResp, err error) {
 	resp = &user.UserRegisterResp{}
-	resp.Code = e.SUCCESS
-	err = dao.NewUserDao(ctx).CreateUser(req)
+	id, err := dao.NewUserDao(ctx).CreateUser(req)
 	if err != nil {
-		resp.Code = e.ERROR
-		resp.Msg = "注册失败"
+		config.LOG.Error("数据库查询错误", zap.Error(err))
+		resp.StatusCode = e.ERROR
+		resp.StatusMsg = "注册失败"
 		config.LOG.Error("createUser error", zap.Error(err))
+		return resp, nil
 	}
+	resp.StatusCode = e.SUCCESS
+	resp.StatusMsg = "注册成功"
+	resp.UserId = id
 	return
 }
 
 func (u *UserServe) GetUserById(ctx context.Context, req *user.GetUserByIdReq) (resp *user.GetUserByIdResp, err error) {
-	resp.Code = e.SUCCESS
 	r, err := dao.NewUserDao(ctx).GetUserInfoById(req)
 	if err != nil {
-		resp.Code = e.ERROR
-		resp.Msg = "获取用户信息失败"
+		resp.StatusCode = e.ERROR
+		resp.StatusMsg = "获取用户信息失败"
 		return
 	}
 	userResp := queryDetailed(r)
 	resp = &user.GetUserByIdResp{
-		Code: e.SUCCESS,
-		Msg:  "获取用户信息成功",
-		User: userResp,
+		StatusCode: e.SUCCESS,
+		StatusMsg:  "获取用户信息成功",
+		User:       userResp,
 	}
 	return
 }
@@ -76,12 +91,13 @@ func queryDetailed(r *userModel.User) (respUser *user.User) {
 	respUser = &user.User{
 		Id:            r.ID,
 		Name:          r.NickName,
-		FollowCount:   int64(r.FollowCount),
-		FollowerCount: int64(r.FollowerCount),
-		Sex:           int64(r.Sex),
-		Dec:           r.Dec,
-		Email:         r.Email,
-		Avatar:        r.Avatar,
+		FollowCount:   0, //TODO 需要修改
+		FollowerCount: 0,
+		IsFollow:      true, // TODO 需要修改
+		//Sex:           int64(r.Sex),
+		//Dec:           r.Dec,
+		//Email:         r.Email,
+		//Avatar:        r.Avatar,
 	}
 	return
 }

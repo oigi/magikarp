@@ -2,15 +2,16 @@ package main
 
 import (
 	"context"
+	"github.com/oigi/Magikarp/app/publish/internal/model"
+	"github.com/oigi/Magikarp/app/publish/internal/rpc"
 	"github.com/oigi/Magikarp/app/publish/internal/service"
 	"github.com/oigi/Magikarp/config"
 	"github.com/oigi/Magikarp/grpc/pb/publish"
 	"github.com/oigi/Magikarp/pkg/consts"
 	"github.com/oigi/Magikarp/pkg/discovery"
 	"github.com/oigi/Magikarp/pkg/loading"
-	"github.com/oigi/Magikarp/pkg/mongo"
+	"github.com/oigi/Magikarp/pkg/mysql"
 	"github.com/oigi/Magikarp/pkg/prometheus"
-	"github.com/oigi/Magikarp/pkg/redis"
 	"github.com/oigi/Magikarp/pkg/tracing"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"go.uber.org/zap"
@@ -20,9 +21,8 @@ import (
 
 func main() {
 	loading.Loading()
-	redis.InitRedis()
-	mongo.InitMongoClient()
-
+	mysql.InitMysql(&model.Video{})
+	rpc.Init()
 	// etcd 地址
 	etcdAddress := []string{config.CONFIG.Etcd.Address}
 	// 服务注册
@@ -46,10 +46,13 @@ func main() {
 		}
 	}()
 	handler := otelgrpc.NewServerHandler()
+	mb := 1024 * 1024
 	server := grpc.NewServer(
 		grpc.StatsHandler(handler),
 		grpc.UnaryInterceptor(prometheus.UnaryServerInterceptor),
 		grpc.StreamInterceptor(prometheus.StreamServerInterceptor),
+		grpc.MaxRecvMsgSize(100*mb),
+		grpc.MaxSendMsgSize(100*mb),
 	)
 	defer server.Stop()
 	// 绑定service

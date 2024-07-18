@@ -12,8 +12,8 @@ message CreateVideoRequest {
 }
 
 message CreateVideoResponse {
-  int64 code = 1; // 状态码，0-成功，其他值-失败
-  string msg = 2; // 返回状态描述
+  int64 status_code = 1; // 状态码，0-成功，其他值-失败
+  string status_msg = 2; // 返回状态描述
 }
 
 message ListVideoRequest{
@@ -21,8 +21,8 @@ message ListVideoRequest{
 }
 
 message ListVideoResponse{
-  int64 code = 1; // 状态码，0-成功，其他值-失败
-  string msg = 2; // 返回状态描述
+  int64 status_code = 1; // 状态码，0-成功，其他值-失败
+  string status_msg = 2; // 返回状态描述
   repeated feed.Video video_list = 3; // 视频列表
 }
 

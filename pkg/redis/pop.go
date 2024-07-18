@@ -32,7 +32,6 @@ func (c *ClientRedis) LPops(ctx context.Context, key string, times int) ([]strin
 		end
 		return result
 	`
-
 	// 执行 Lua 脚本
 	cmd := c.Client.Eval(ctx, script, []string{key}, times)
 	if cmd.Err() != nil {

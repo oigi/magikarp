@@ -9,8 +9,8 @@ message ActionReq {
 }
 
 message ActionResp {
-  int64 code = 1;
-  string msg = 2;
+  int64 status_code = 1;
+  string status_msg = 2;
 }
 
 message FollowListReq {
@@ -18,8 +18,8 @@ message FollowListReq {
 }
 
 message FollowListResp {
-  int64 code = 1;
-  string msg = 2;
+  int64 status_code = 1;
+  string status_msg = 2;
   repeated int64 follow_list = 3; // 关注列表
 }
 
@@ -28,8 +28,8 @@ message FollowerListReq {
 }
 
 message FollowerListResp {
-  int64 code = 1;
-  string msg = 2;
+  int64 status_code = 1;
+  string status_msg = 2;
   repeated int64 follower_list = 3; // 粉丝列表
 }
 
@@ -38,8 +38,8 @@ message FriendListReq {
 }
 
 message FriendListResp {
-  int64 code = 1;
-  string msg = 2;
+  int64 status_code = 1;
+  string status_msg = 2;
   repeated int64 friend_list = 3; // 好友列表
 }
 

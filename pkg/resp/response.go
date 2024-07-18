@@ -1,11 +1,6 @@
 package resp
 
-import (
-    "github.com/gin-gonic/gin"
-    e2 "github.com/oigi/Magikarp/pkg/consts/e"
-)
-
-type Response struct {
+/*type Response struct {
     Status  int         `json:"status"`
     Data    interface{} `json:"data"`
     Msg     string      `json:"msg"`
@@ -66,3 +61,4 @@ func getTrackIdFromCtx(ctx *gin.Context) (trackId string, err error) {
     trackId = ctx.GetHeader("Track-Id")
     return trackId, nil
 }
+*/

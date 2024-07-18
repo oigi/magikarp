@@ -3,9 +3,9 @@ package dao
 import (
 	"context"
 	"fmt"
-	"github.com/oigi/Magikarp/app/gateway/rpc"
 	"github.com/oigi/Magikarp/app/publish/internal/consts"
 	publishModel "github.com/oigi/Magikarp/app/publish/internal/model"
+	"github.com/oigi/Magikarp/app/publish/internal/rpc"
 	"github.com/oigi/Magikarp/grpc/pb/feed"
 	"github.com/oigi/Magikarp/grpc/pb/user"
 	mongodb "github.com/oigi/Magikarp/pkg/mongo"
@@ -26,7 +26,7 @@ func NewMongoClient(ctx context.Context) *MongoFeedDao {
 }
 
 func (m *MongoFeedDao) InsertVideoInMongo(
-	id int64, userId int64, title string, playUrl string, coverUrl string, label string, category string, timestamp string) error {
+	id int64, userId int64, title string, playUrl string, coverUrl string, label string, category string, timestamp int64) error {
 	video := publishModel.VideoInMongo{
 		ID:        id,
 		UserID:    userId,
@@ -50,7 +50,7 @@ func (m *MongoFeedDao) InsertVideoInMongo(
 func (m *MongoFeedDao) QueryPublishList(userId int64) ([]*feed.Video, error) {
 	var videosInMongo []publishModel.VideoInMongo
 	var videosFeed []*feed.Video
-	filter := bson.M{"userId": userId}
+	filter := bson.M{"user_id": userId}
 
 	collection := m.Database(consts.MongoDatabaseName).Collection(consts.MongoCollection)
 

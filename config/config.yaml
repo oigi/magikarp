@@ -6,6 +6,7 @@ mysql:
   username: root
   password: "123456"
 
+# 上传github记得去掉 !!!!!!!!!!!!!!!!!!!
 oss:
   endpoint: ""
   accessKey: ""
@@ -17,16 +18,19 @@ jwt:
   signing-key: "12312-sasdh-edasne"
 
 redis:
-  db: 0
-  addr: 127.0.0.1:6379
+  dbs:
+    default: 0
+    feedlist: 1
+    feedmarkedtime: 2
+    favcache: 3
+    favcount: 4
+  addr: "127.0.0.1:6379"
   password: "123456"
+
 
 mongo:
   host: 127.0.0.1
   port: "27017"
-  username: "root"
-  password: "123456"
-
 
 zap:
   level: info
@@ -44,7 +48,7 @@ etcd:
   server:
     port: :4000
     version: 1.0
-    jwtSecret: "38324-search-engine"
+    jwtSecret: "12312-sasdh-edasne"
     metrics: 127.0.0.1:4000
 
   services:

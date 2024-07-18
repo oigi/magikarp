@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"github.com/oigi/Magikarp/app/feed/internal/rpc"
 	"github.com/oigi/Magikarp/app/feed/internal/service"
 	"github.com/oigi/Magikarp/config"
 	"github.com/oigi/Magikarp/grpc/pb/feed"
@@ -10,7 +11,6 @@ import (
 	"github.com/oigi/Magikarp/pkg/loading"
 	"github.com/oigi/Magikarp/pkg/mongo"
 	"github.com/oigi/Magikarp/pkg/prometheus"
-	"github.com/oigi/Magikarp/pkg/redis"
 	"github.com/oigi/Magikarp/pkg/tracing"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"go.uber.org/zap"
@@ -20,9 +20,8 @@ import (
 
 func main() {
 	loading.Loading()
-	redis.InitRedis()
 	mongo.InitMongoClient()
-
+	rpc.Init()
 	// etcd 地址
 	etcdAddress := []string{config.CONFIG.Etcd.Address}
 	// 服务注册

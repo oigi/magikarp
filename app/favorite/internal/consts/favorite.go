@@ -1,9 +1,9 @@
 package consts
 
 const (
-	FavCache = "fav_cache"
-	FavCount = "fav_count"
+	FavCache = "favcache"
+	FavCount = "favcount"
 
 	MongoDatabaseName = "default"
-	MongoCollection   = "fav"
+	MongoCollection   = "feed"
 )

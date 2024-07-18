@@ -18,7 +18,7 @@ type Video struct {
 	Category      string        `json:"category" gorm:"column:category;type:int(11);comment:视频分类;NOT NULL"`
 	Duration      time.Duration `json:"duration" gorm:"column:duration;type:varchar(255);comment:视频时长"`
 	Label         string        `json:"label" gorm:"column:label;type:varchar(255);comment:视频标签;NOT NULL"`
-	Open          bool          `json:"open" gorm:"column:open;default:'true';comment:是否公开"`
+	//Open          bool          `json:"open" gorm:"column:open;default:'true';comment:是否公开"`
 }
 
 type VideoInMongo struct {
@@ -29,5 +29,5 @@ type VideoInMongo struct {
 	CoverURL  string `bson:"cover_url"`
 	Label     string `bson:"label"`
 	Category  string `bson:"category"`
-	Timestamp string `bson:"timestamp"`
+	Timestamp int64  `bson:"timestamp"`
 }

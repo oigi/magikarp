@@ -32,11 +32,12 @@ func (db *UserDao) GetUserInfoById(req *user.GetUserByIdReq) (r *userModel.User,
 // GetUserInfo 获取用户信息
 func (db *UserDao) GetUserInfo(req *user.UserLoginReq) (r *userModel.User, err error) {
 	r = &userModel.User{}
-	err = db.Model(&r).Where("email=?", req.Email).First(&r).Error
+	err = db.Where("email=?", req.Email).First(&r).Error
 	if err != nil {
 		err = errors.Wrapf(err, "failed to get user info, email = %v", req.Email)
 		return nil, err
 	}
+
 	// 解密数据库中存储的密码
 	if ok := utils.BcryptCheck(req.Password, r.Password); !ok {
 		return nil, errors.Wrap(err, "failed to compare passwords")
@@ -45,25 +46,28 @@ func (db *UserDao) GetUserInfo(req *user.UserLoginReq) (r *userModel.User, err e
 }
 
 // CreateUser 创建用户
-func (db *UserDao) CreateUser(req *user.UserRegisterReq) (err error) {
+func (db *UserDao) CreateUser(req *user.UserRegisterReq) (id int64, err error) {
 	var user userModel.User
 
-	if !errors.Is(db.Where("nick_name = ?", req.NickName).First(user).Error, gorm.ErrRecordNotFound) { // 判断昵称是否注册
-		return errors.New("昵称已注册")
+	if !errors.Is(db.Where("nick_name = ?", req.NickName).First(&user).Error, gorm.ErrRecordNotFound) {
+		return 0, errors.New("昵称已注册")
 	}
 
-	if !errors.Is(db.Where("email = ?", req.Email).First(user).Error, gorm.ErrRecordNotFound) {
-		return errors.New("邮箱已注册")
+	user = userModel.User{}
+
+	if !errors.Is(db.Where("email = ?", req.Email).First(&user).Error, gorm.ErrRecordNotFound) {
+		return 0, errors.New("邮箱已注册")
 	}
-	// 密码hash加密 注册
+
+	// 密码hash加密并创建新用户，确保使用的是新的user变量
 	user = userModel.User{
 		Email:    req.Email,
 		Password: utils.BcryptHash(req.Password),
 		NickName: req.NickName,
 	}
 
-	if err = db.Create(user).Error; err != nil {
-		return errors.Wrap(err, "failed to create user")
+	if err = db.Create(&user).Error; err != nil {
+		return 0, errors.Wrap(err, "failed to create user")
 	}
-	return
+	return user.ID, nil
 }

@@ -2,26 +2,46 @@ package http
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/oigi/Magikarp/app/gateway/model"
 	"github.com/oigi/Magikarp/app/gateway/rpc"
 	"github.com/oigi/Magikarp/config"
 	"github.com/oigi/Magikarp/grpc/pb/feed"
-	"github.com/oigi/Magikarp/pkg/resp"
+	"github.com/oigi/Magikarp/pkg/consts/e"
+	"github.com/oigi/Magikarp/pkg/jwt"
 	"go.uber.org/zap"
 	"net/http"
+	"strconv"
 )
 
 func ListFeed(ctx *gin.Context) {
 	var req feed.ListFeedReq
-	err := ctx.ShouldBind(&req)
+	var userId int64
+	authHeader := ctx.Query("token")
+	if authHeader == "" {
+		userId = 0
+	} else {
+		claims, err := jwt.ParseToken(authHeader)
+		if err != nil {
+			config.LOG.Error("解析错误", zap.Error(err))
+			resp := model.CommonResp{
+				StatusCode: e.ERROR,
+				StatusMsg:  "解析错误",
+			}
+			ctx.JSON(http.StatusUnauthorized, resp)
+		}
+		userId = claims.ID
+	}
+	req.UserId = userId
+	latestTimeString := ctx.Query("latest_time")
+	latestTimeInt, _ := strconv.ParseInt(latestTimeString, 10, 64)
+
+	req.LastTime = latestTimeInt
+
+	resp, err := rpc.ListFeed(ctx, &req)
 	if err != nil {
-		config.LOG.Error("绑定参数错误: ", zap.Error(err))
-		ctx.JSON(http.StatusOK, resp.RespError(ctx, err, "绑定参数错误"))
+		ctx.JSON(http.StatusOK, resp)
 		return
 	}
-	r, err := rpc.ListFeed(ctx, &req)
-	if err != nil {
-		ctx.JSON(http.StatusOK, resp.RespError(ctx, err, "RPC服务调用失败"))
-		return
-	}
-	ctx.JSON(http.StatusOK, resp.RespSuccess(ctx, r))
+	resp.Code = e.DOUYINSUCCESS
+	ctx.JSON(http.StatusOK, resp)
 }
